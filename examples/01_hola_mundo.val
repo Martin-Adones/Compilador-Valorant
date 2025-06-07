@@ -1,0 +1,19 @@
+// Ejemplo 1: Hola Mundo y Variables Básicas
+
+agent spike() {
+    // Declaración de variables
+    sage vida = 100;
+    viper escudo = 50.5;
+    cypher nombre = "Valorant";
+
+    // Mostrar valores
+    sova "Mi primer programa en Valorant";
+    sova "Vida: ";
+    sova vida;
+    sova "Escudo: ";
+    sova escudo;
+    sova "Nombre: ";
+    sova nombre;
+
+    plant 0;
+} 

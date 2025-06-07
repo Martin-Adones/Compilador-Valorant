@@ -1,0 +1,36 @@
+// Ejemplo 2: Operaciones Aritméticas
+
+agent spike() {
+    // Declaración de variables
+    sage vida = 100;
+    sage danio = 25;
+    viper precision = 75.5;
+    viper bonus = 10.5;
+
+    // Operaciones con heal (+)
+    sage vida_total = vida heal danio;
+    sova "Vida total: ";
+    sova vida_total;
+
+    // Operaciones con damage (-)
+    sage vida_restante = vida damage danio;
+    sova "Vida restante: ";
+    sova vida_restante;
+
+    // Operaciones con kill (*)
+    viper danio_critico = precision kill 2.0;
+    sova "Daño crítico: ";
+    sova danio_critico;
+
+    // Operaciones con share (%)
+    sage resto = vida share danio;
+    sova "Resto de división: ";
+    sova resto;
+
+    // Operaciones mixtas
+    viper resultado_final = (precision heal bonus) kill 2.0;
+    sova "Resultado final: ";
+    sova resultado_final;
+
+    plant 0;
+}

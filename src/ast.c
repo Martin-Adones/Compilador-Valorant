@@ -1,7 +1,7 @@
 #include "../include/ast.h"
 
 // Función auxiliar para crear un nuevo nodo
-static ASTNode* create_node(NodeType type) {
+ASTNode* create_node(NodeType type) {
     ASTNode* node = (ASTNode*)malloc(sizeof(ASTNode));
     if (!node) {
         fprintf(stderr, "Error: No se pudo asignar memoria para el nodo AST\n");
@@ -35,9 +35,9 @@ ASTNode* create_string_node(const char* value) {
     return node;
 }
 
-ASTNode* create_identifier_node(const char* name) {
+ASTNode* create_identifier_node(char* name) {
     ASTNode* node = create_node(NODE_IDENTIFIER);
-    node->value.string_value = strdup(name);
+    node->value.identifier = strdup(name);
     return node;
 }
 

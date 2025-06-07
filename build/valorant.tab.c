@@ -484,7 +484,7 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  6
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   122
+#define YYLAST   115
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  31
@@ -493,7 +493,7 @@ union yyalloc
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  39
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  84
+#define YYNSTATES  86
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   279
@@ -544,10 +544,10 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    55,    55,    59,    60,    69,    80,    81,    85,    86,
-      99,   100,   101,   102,   103,   104,   105,   106,   110,   111,
-     112,   116,   117,   118,   119,   120,   124,   125,   126,   127,
-     128,   129,   130,   131,   135,   136,   140,   144,   151,   155
+       0,    56,    56,    60,    61,    70,    81,    82,    86,    87,
+     100,   101,   107,   108,   109,   110,   111,   112,   119,   120,
+     121,   125,   126,   127,   128,   129,   133,   134,   135,   136,
+     137,   138,   139,   140,   144,   145,   149,   153,   160,   164
 };
 #endif
 
@@ -580,7 +580,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-55)
+#define YYPACT_NINF (-61)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -594,15 +594,15 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      21,    11,    25,    21,   -55,    23,   -55,   -55,    10,    19,
-      42,   -55,     8,    20,    31,    43,    46,    48,    49,    50,
-       8,   -55,   -55,   -55,    53,     8,   -55,    63,   -55,    58,
-      88,   -55,   -55,    60,    61,    84,   102,   -55,     8,     8,
-      90,    91,    92,   -55,   102,     8,    -4,   -55,   -55,   -55,
-       8,     8,     8,     8,     8,     8,     8,   -55,   -55,   -55,
-     -55,     9,    95,     8,     8,     8,   102,   -55,     1,     1,
-       1,   -55,    37,    37,   -55,    19,    19,   102,   102,   102,
-     -55,   104,    19,   -55
+      24,     5,    33,    24,   -61,    16,   -61,   -61,    19,    30,
+      37,   -61,    89,    17,    22,    26,    36,    38,    39,    40,
+      89,    45,   -61,    55,   -61,    35,   -61,   -61,    46,    47,
+      48,   -61,   -61,   -61,    56,    89,    94,   -61,    89,    89,
+      57,    58,    81,   -61,    94,    89,   -61,   -61,   -61,   -61,
+     -61,   -61,    89,     3,    89,    89,    89,    89,    89,    89,
+      89,    80,    87,    89,    89,    89,    -4,    94,   -61,    12,
+      12,    12,   -61,    20,    20,   -61,    30,    30,    94,    94,
+      94,   -61,   -61,    65,    30,   -61
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -612,27 +612,27 @@ static const yytype_int8 yydefact[] =
 {
        0,     0,     0,     2,     3,     0,     1,     4,     0,     0,
        0,     5,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,    21,    22,    23,    24,     0,     7,     0,     8,     0,
-       0,    12,    13,     0,     0,     0,    39,    17,     0,     0,
-       0,     0,     0,    37,    38,     0,     0,     6,     9,    10,
-       0,     0,     0,     0,     0,     0,     0,    11,    14,    15,
-      16,     0,     0,     0,     0,     0,    25,    33,    30,    31,
-      32,    29,    26,    27,    28,     0,     0,    18,    19,    20,
-      36,    34,     0,    35
+       0,     0,     7,     0,     8,     0,    12,    13,     0,     0,
+       0,    21,    22,    23,    24,     0,    39,    17,     0,     0,
+       0,     0,     0,    37,    38,     0,     6,     9,    10,    14,
+      15,    16,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,    25,    33,    30,
+      31,    32,    29,    26,    27,    28,     0,     0,    18,    19,
+      20,    11,    36,    34,     0,    35
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -55,   -55,   -55,   117,   -54,   -55,    94,   -55,   -12,   -55,
-     -55,   -55,   -55,   -55
+     -61,   -61,   -61,   105,   -60,   -61,    86,   -61,   -20,   -61,
+     -61,   -61,   -61,   -61
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     2,     3,     4,    11,    27,    28,    29,    30,    31,
-      32,    33,    34,    35
+       0,     2,     3,     4,    11,    23,    24,    25,    36,    26,
+      27,    28,    29,    30
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -640,36 +640,34 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      36,    50,    51,    52,    53,    54,    55,    56,    44,    53,
-      54,    55,    56,    46,    50,    51,    52,    53,    54,    55,
-      56,    80,    81,    67,     1,     6,    61,    62,    83,    21,
-      22,    23,    24,    66,    25,     5,    75,     9,    68,    69,
-      70,    71,    72,    73,    74,    53,    12,    10,    56,     8,
-      37,    77,    78,    79,    13,    14,    15,    38,    16,    17,
-      18,    19,    20,    21,    22,    23,    24,    12,    25,    39,
-      40,    26,    41,    42,    43,    13,    14,    15,    45,    16,
-      17,    18,    19,    20,    21,    22,    23,    24,    49,    25,
-      58,    59,    47,    50,    51,    52,    53,    54,    55,    56,
-      50,    51,    52,    53,    54,    55,    56,    50,    51,    52,
-      53,    54,    55,    56,    60,    63,    64,    65,    57,    82,
-       7,    48,    76
+      44,    54,    55,    56,    57,    58,    59,    60,    54,    55,
+      56,    57,    58,    59,    60,    53,    82,    83,    61,    62,
+      57,    58,    59,    60,    85,    66,    81,     1,    57,     5,
+      68,    60,    67,     6,    69,    70,    71,    72,    73,    74,
+      75,    12,     8,    78,    79,    80,     9,    37,    38,    13,
+      14,    15,    39,    16,    17,    18,    19,    20,    10,    12,
+      40,    21,    41,    42,    43,    48,    22,    13,    14,    15,
+      45,    16,    17,    18,    19,    20,    49,    50,    51,    21,
+      84,    52,    63,    64,    46,    54,    55,    56,    57,    58,
+      59,    60,    54,    55,    56,    57,    58,    59,    60,    54,
+      55,    56,    57,    58,    59,    60,    65,    76,     7,    47,
+      31,    32,    33,    34,    77,    35
 };
 
 static const yytype_int8 yycheck[] =
 {
-      12,     5,     6,     7,     8,     9,    10,    11,    20,     8,
-       9,    10,    11,    25,     5,     6,     7,     8,     9,    10,
-      11,    75,    76,    27,     3,     0,    38,    39,    82,    21,
-      22,    23,    24,    45,    26,    24,    27,    27,    50,    51,
-      52,    53,    54,    55,    56,     8,     4,    28,    11,    26,
-      30,    63,    64,    65,    12,    13,    14,    26,    16,    17,
-      18,    19,    20,    21,    22,    23,    24,     4,    26,    26,
-      24,    29,    24,    24,    24,    12,    13,    14,    25,    16,
-      17,    18,    19,    20,    21,    22,    23,    24,    30,    26,
-      30,    30,    29,     5,     6,     7,     8,     9,    10,    11,
-       5,     6,     7,     8,     9,    10,    11,     5,     6,     7,
-       8,     9,    10,    11,    30,    25,    25,    25,    30,    15,
-       3,    27,    27
+      20,     5,     6,     7,     8,     9,    10,    11,     5,     6,
+       7,     8,     9,    10,    11,    35,    76,    77,    38,    39,
+       8,     9,    10,    11,    84,    45,    30,     3,     8,    24,
+      27,    11,    52,     0,    54,    55,    56,    57,    58,    59,
+      60,     4,    26,    63,    64,    65,    27,    30,    26,    12,
+      13,    14,    26,    16,    17,    18,    19,    20,    28,     4,
+      24,    24,    24,    24,    24,    30,    29,    12,    13,    14,
+      25,    16,    17,    18,    19,    20,    30,    30,    30,    24,
+      15,    25,    25,    25,    29,     5,     6,     7,     8,     9,
+      10,    11,     5,     6,     7,     8,     9,    10,    11,     5,
+       6,     7,     8,     9,    10,    11,    25,    27,     3,    23,
+      21,    22,    23,    24,    27,    26
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -678,13 +676,13 @@ static const yytype_int8 yystos[] =
 {
        0,     3,    32,    33,    34,    24,     0,    34,    26,    27,
       28,    35,     4,    12,    13,    14,    16,    17,    18,    19,
-      20,    21,    22,    23,    24,    26,    29,    36,    37,    38,
-      39,    40,    41,    42,    43,    44,    39,    30,    26,    26,
-      24,    24,    24,    24,    39,    25,    39,    29,    37,    30,
-       5,     6,     7,     8,     9,    10,    11,    30,    30,    30,
-      30,    39,    39,    25,    25,    25,    39,    27,    39,    39,
-      39,    39,    39,    39,    39,    27,    27,    39,    39,    39,
-      35,    35,    15,    35
+      20,    24,    29,    36,    37,    38,    40,    41,    42,    43,
+      44,    21,    22,    23,    24,    26,    39,    30,    26,    26,
+      24,    24,    24,    24,    39,    25,    29,    37,    30,    30,
+      30,    30,    25,    39,     5,     6,     7,     8,     9,    10,
+      11,    39,    39,    25,    25,    25,    39,    39,    27,    39,
+      39,    39,    39,    39,    39,    39,    27,    27,    39,    39,
+      39,    30,    35,    35,    15,    35
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
@@ -700,7 +698,7 @@ static const yytype_int8 yyr1[] =
 static const yytype_int8 yyr2[] =
 {
        0,     2,     1,     1,     2,     5,     3,     2,     1,     2,
-       2,     2,     1,     1,     2,     2,     2,     2,     4,     4,
+       2,     4,     1,     1,     2,     2,     2,     2,     4,     4,
        4,     1,     1,     1,     1,     3,     3,     3,     3,     3,
        3,     3,     3,     3,     5,     7,     5,     2,     2,     2
 };
@@ -1166,30 +1164,30 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* program: function_list  */
-#line 55 "src/valorant.y"
+#line 56 "src/valorant.y"
                                        { root = (yyvsp[0].ast_node); }
-#line 1172 "build/valorant.tab.c"
+#line 1170 "build/valorant.tab.c"
     break;
 
   case 3: /* function_list: function  */
-#line 59 "src/valorant.y"
+#line 60 "src/valorant.y"
                                       { (yyval.ast_node) = (yyvsp[0].ast_node); }
-#line 1178 "build/valorant.tab.c"
+#line 1176 "build/valorant.tab.c"
     break;
 
   case 4: /* function_list: function_list function  */
-#line 60 "src/valorant.y"
+#line 61 "src/valorant.y"
                                       { 
         ASTNode* temp = (yyvsp[-1].ast_node);
         while (temp->next) temp = temp->next;
         temp->next = (yyvsp[0].ast_node);
         (yyval.ast_node) = (yyvsp[-1].ast_node);
     }
-#line 1189 "build/valorant.tab.c"
+#line 1187 "build/valorant.tab.c"
     break;
 
   case 5: /* function: AGENT IDENTIFIER '(' ')' block  */
-#line 69 "src/valorant.y"
+#line 70 "src/valorant.y"
                                       { 
         if (strcmp((yyvsp[-3].string_val), "spike") == 0) {
             (yyval.ast_node) = (yyvsp[0].ast_node); // Para la función spike, solo retornamos el bloque
@@ -1198,29 +1196,29 @@ yyreduce:
         }
         free((yyvsp[-3].string_val));
     }
-#line 1202 "build/valorant.tab.c"
+#line 1200 "build/valorant.tab.c"
     break;
 
   case 6: /* block: '{' statement_list '}'  */
-#line 80 "src/valorant.y"
+#line 81 "src/valorant.y"
                                       { (yyval.ast_node) = create_block_node((yyvsp[-1].ast_node)); }
-#line 1208 "build/valorant.tab.c"
+#line 1206 "build/valorant.tab.c"
     break;
 
   case 7: /* block: '{' '}'  */
-#line 81 "src/valorant.y"
+#line 82 "src/valorant.y"
                                       { (yyval.ast_node) = create_block_node(NULL); }
-#line 1214 "build/valorant.tab.c"
+#line 1212 "build/valorant.tab.c"
     break;
 
   case 8: /* statement_list: statement  */
-#line 85 "src/valorant.y"
+#line 86 "src/valorant.y"
                                       { (yyval.ast_node) = (yyvsp[0].ast_node); }
-#line 1220 "build/valorant.tab.c"
+#line 1218 "build/valorant.tab.c"
     break;
 
   case 9: /* statement_list: statement_list statement  */
-#line 86 "src/valorant.y"
+#line 87 "src/valorant.y"
                                       {
         if ((yyvsp[-1].ast_node) == NULL) {
             (yyval.ast_node) = (yyvsp[0].ast_node);
@@ -1231,197 +1229,205 @@ yyreduce:
             (yyval.ast_node) = (yyvsp[-1].ast_node);
         }
     }
-#line 1235 "build/valorant.tab.c"
+#line 1233 "build/valorant.tab.c"
     break;
 
   case 10: /* statement: declaration ';'  */
-#line 99 "src/valorant.y"
-                                      { (yyval.ast_node) = (yyvsp[-1].ast_node); }
-#line 1241 "build/valorant.tab.c"
-    break;
-
-  case 11: /* statement: expression ';'  */
 #line 100 "src/valorant.y"
                                       { (yyval.ast_node) = (yyvsp[-1].ast_node); }
-#line 1247 "build/valorant.tab.c"
+#line 1239 "build/valorant.tab.c"
+    break;
+
+  case 11: /* statement: IDENTIFIER '=' expression ';'  */
+#line 101 "src/valorant.y"
+                                      {
+        ASTNode* node = create_node(NODE_ASSIGNMENT);
+        node->left = create_identifier_node((yyvsp[-3].string_val));
+        node->right = (yyvsp[-1].ast_node);
+        (yyval.ast_node) = node;
+    }
+#line 1250 "build/valorant.tab.c"
     break;
 
   case 12: /* statement: if_statement  */
-#line 101 "src/valorant.y"
+#line 107 "src/valorant.y"
                                       { (yyval.ast_node) = (yyvsp[0].ast_node); }
-#line 1253 "build/valorant.tab.c"
+#line 1256 "build/valorant.tab.c"
     break;
 
   case 13: /* statement: while_statement  */
-#line 102 "src/valorant.y"
+#line 108 "src/valorant.y"
                                       { (yyval.ast_node) = (yyvsp[0].ast_node); }
-#line 1259 "build/valorant.tab.c"
+#line 1262 "build/valorant.tab.c"
     break;
 
   case 14: /* statement: input_statement ';'  */
-#line 103 "src/valorant.y"
+#line 109 "src/valorant.y"
                                       { (yyval.ast_node) = (yyvsp[-1].ast_node); }
-#line 1265 "build/valorant.tab.c"
+#line 1268 "build/valorant.tab.c"
     break;
 
   case 15: /* statement: output_statement ';'  */
-#line 104 "src/valorant.y"
+#line 110 "src/valorant.y"
                                       { (yyval.ast_node) = (yyvsp[-1].ast_node); }
-#line 1271 "build/valorant.tab.c"
+#line 1274 "build/valorant.tab.c"
     break;
 
   case 16: /* statement: return_statement ';'  */
-#line 105 "src/valorant.y"
+#line 111 "src/valorant.y"
                                       { (yyval.ast_node) = (yyvsp[-1].ast_node); }
-#line 1277 "build/valorant.tab.c"
+#line 1280 "build/valorant.tab.c"
     break;
 
   case 17: /* statement: DEFUSE ';'  */
-#line 106 "src/valorant.y"
-                                      { (yyval.ast_node) = NULL; /* break statement */ }
-#line 1283 "build/valorant.tab.c"
-    break;
-
-  case 18: /* declaration: SAGE IDENTIFIER '=' expression  */
-#line 110 "src/valorant.y"
-                                      { (yyval.ast_node) = create_declaration_node(TYPE_INT, (yyvsp[-2].string_val), (yyvsp[0].ast_node)); free((yyvsp[-2].string_val)); }
+#line 112 "src/valorant.y"
+                                      { 
+        ASTNode* node = create_node(NODE_DEFUSE);
+        (yyval.ast_node) = node;
+    }
 #line 1289 "build/valorant.tab.c"
     break;
 
-  case 19: /* declaration: VIPER IDENTIFIER '=' expression  */
-#line 111 "src/valorant.y"
-                                      { (yyval.ast_node) = create_declaration_node(TYPE_FLOAT, (yyvsp[-2].string_val), (yyvsp[0].ast_node)); free((yyvsp[-2].string_val)); }
+  case 18: /* declaration: SAGE IDENTIFIER '=' expression  */
+#line 119 "src/valorant.y"
+                                      { (yyval.ast_node) = create_declaration_node(TYPE_INT, (yyvsp[-2].string_val), (yyvsp[0].ast_node)); free((yyvsp[-2].string_val)); }
 #line 1295 "build/valorant.tab.c"
     break;
 
-  case 20: /* declaration: CYPHER IDENTIFIER '=' expression  */
-#line 112 "src/valorant.y"
-                                       { (yyval.ast_node) = create_declaration_node(TYPE_STRING, (yyvsp[-2].string_val), (yyvsp[0].ast_node)); free((yyvsp[-2].string_val)); }
+  case 19: /* declaration: VIPER IDENTIFIER '=' expression  */
+#line 120 "src/valorant.y"
+                                      { (yyval.ast_node) = create_declaration_node(TYPE_FLOAT, (yyvsp[-2].string_val), (yyvsp[0].ast_node)); free((yyvsp[-2].string_val)); }
 #line 1301 "build/valorant.tab.c"
     break;
 
-  case 21: /* expression: INT_LITERAL  */
-#line 116 "src/valorant.y"
-                                      { (yyval.ast_node) = create_number_node((yyvsp[0].int_val)); }
+  case 20: /* declaration: CYPHER IDENTIFIER '=' expression  */
+#line 121 "src/valorant.y"
+                                       { (yyval.ast_node) = create_declaration_node(TYPE_STRING, (yyvsp[-2].string_val), (yyvsp[0].ast_node)); free((yyvsp[-2].string_val)); }
 #line 1307 "build/valorant.tab.c"
     break;
 
-  case 22: /* expression: FLOAT_LITERAL  */
-#line 117 "src/valorant.y"
-                                      { (yyval.ast_node) = create_float_node((yyvsp[0].float_val)); }
+  case 21: /* expression: INT_LITERAL  */
+#line 125 "src/valorant.y"
+                                      { (yyval.ast_node) = create_number_node((yyvsp[0].int_val)); }
 #line 1313 "build/valorant.tab.c"
     break;
 
-  case 23: /* expression: STRING_LITERAL  */
-#line 118 "src/valorant.y"
-                                      { (yyval.ast_node) = create_string_node((yyvsp[0].string_val)); free((yyvsp[0].string_val)); }
+  case 22: /* expression: FLOAT_LITERAL  */
+#line 126 "src/valorant.y"
+                                      { (yyval.ast_node) = create_float_node((yyvsp[0].float_val)); }
 #line 1319 "build/valorant.tab.c"
     break;
 
-  case 24: /* expression: IDENTIFIER  */
-#line 119 "src/valorant.y"
-                                      { (yyval.ast_node) = create_identifier_node((yyvsp[0].string_val)); free((yyvsp[0].string_val)); }
+  case 23: /* expression: STRING_LITERAL  */
+#line 127 "src/valorant.y"
+                                      { (yyval.ast_node) = create_string_node((yyvsp[0].string_val)); free((yyvsp[0].string_val)); }
 #line 1325 "build/valorant.tab.c"
     break;
 
+  case 24: /* expression: IDENTIFIER  */
+#line 128 "src/valorant.y"
+                                      { (yyval.ast_node) = create_identifier_node((yyvsp[0].string_val)); free((yyvsp[0].string_val)); }
+#line 1331 "build/valorant.tab.c"
+    break;
+
   case 25: /* expression: IDENTIFIER '=' expression  */
-#line 120 "src/valorant.y"
+#line 129 "src/valorant.y"
                                       { 
         (yyval.ast_node) = create_assignment_node(create_identifier_node((yyvsp[-2].string_val)), (yyvsp[0].ast_node));
         free((yyvsp[-2].string_val));
     }
-#line 1334 "build/valorant.tab.c"
-    break;
-
-  case 26: /* expression: expression HEAL expression  */
-#line 124 "src/valorant.y"
-                                      { (yyval.ast_node) = create_binary_op_node(OP_ADD, (yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
 #line 1340 "build/valorant.tab.c"
     break;
 
-  case 27: /* expression: expression DAMAGE expression  */
-#line 125 "src/valorant.y"
-                                      { (yyval.ast_node) = create_binary_op_node(OP_SUB, (yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
+  case 26: /* expression: expression HEAL expression  */
+#line 133 "src/valorant.y"
+                                      { (yyval.ast_node) = create_binary_op_node(OP_ADD, (yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
 #line 1346 "build/valorant.tab.c"
     break;
 
-  case 28: /* expression: expression KILL expression  */
-#line 126 "src/valorant.y"
-                                      { (yyval.ast_node) = create_binary_op_node(OP_MUL, (yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
+  case 27: /* expression: expression DAMAGE expression  */
+#line 134 "src/valorant.y"
+                                      { (yyval.ast_node) = create_binary_op_node(OP_SUB, (yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
 #line 1352 "build/valorant.tab.c"
     break;
 
-  case 29: /* expression: expression SHARE expression  */
-#line 127 "src/valorant.y"
-                                      { (yyval.ast_node) = create_binary_op_node(OP_DIV, (yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
+  case 28: /* expression: expression KILL expression  */
+#line 135 "src/valorant.y"
+                                      { (yyval.ast_node) = create_binary_op_node(OP_MUL, (yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
 #line 1358 "build/valorant.tab.c"
     break;
 
-  case 30: /* expression: expression WIN expression  */
-#line 128 "src/valorant.y"
-                                      { (yyval.ast_node) = create_binary_op_node(OP_WIN, (yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
+  case 29: /* expression: expression SHARE expression  */
+#line 136 "src/valorant.y"
+                                      { (yyval.ast_node) = create_binary_op_node(OP_DIV, (yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
 #line 1364 "build/valorant.tab.c"
     break;
 
-  case 31: /* expression: expression LOSE expression  */
-#line 129 "src/valorant.y"
-                                      { (yyval.ast_node) = create_binary_op_node(OP_LOSE, (yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
+  case 30: /* expression: expression WIN expression  */
+#line 137 "src/valorant.y"
+                                      { (yyval.ast_node) = create_binary_op_node(OP_WIN, (yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
 #line 1370 "build/valorant.tab.c"
     break;
 
-  case 32: /* expression: expression HEADSHOT expression  */
-#line 130 "src/valorant.y"
-                                      { (yyval.ast_node) = create_binary_op_node(OP_HEADSHOT, (yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
+  case 31: /* expression: expression LOSE expression  */
+#line 138 "src/valorant.y"
+                                      { (yyval.ast_node) = create_binary_op_node(OP_LOSE, (yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
 #line 1376 "build/valorant.tab.c"
     break;
 
-  case 33: /* expression: '(' expression ')'  */
-#line 131 "src/valorant.y"
-                                     { (yyval.ast_node) = (yyvsp[-1].ast_node); }
+  case 32: /* expression: expression HEADSHOT expression  */
+#line 139 "src/valorant.y"
+                                      { (yyval.ast_node) = create_binary_op_node(OP_HEADSHOT, (yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
 #line 1382 "build/valorant.tab.c"
     break;
 
-  case 34: /* if_statement: FLASH '(' expression ')' block  */
-#line 135 "src/valorant.y"
-                                                  { (yyval.ast_node) = create_if_node((yyvsp[-2].ast_node), (yyvsp[0].ast_node), NULL); }
+  case 33: /* expression: '(' expression ')'  */
+#line 140 "src/valorant.y"
+                                     { (yyval.ast_node) = (yyvsp[-1].ast_node); }
 #line 1388 "build/valorant.tab.c"
     break;
 
-  case 35: /* if_statement: FLASH '(' expression ')' block SMOKE block  */
-#line 136 "src/valorant.y"
-                                                  { (yyval.ast_node) = create_if_node((yyvsp[-4].ast_node), (yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
+  case 34: /* if_statement: FLASH '(' expression ')' block  */
+#line 144 "src/valorant.y"
+                                                  { (yyval.ast_node) = create_if_node((yyvsp[-2].ast_node), (yyvsp[0].ast_node), NULL); }
 #line 1394 "build/valorant.tab.c"
     break;
 
-  case 36: /* while_statement: ROTATE '(' expression ')' block  */
-#line 140 "src/valorant.y"
-                                      { (yyval.ast_node) = create_while_node((yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
+  case 35: /* if_statement: FLASH '(' expression ')' block SMOKE block  */
+#line 145 "src/valorant.y"
+                                                  { (yyval.ast_node) = create_if_node((yyvsp[-4].ast_node), (yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
 #line 1400 "build/valorant.tab.c"
     break;
 
+  case 36: /* while_statement: ROTATE '(' expression ')' block  */
+#line 149 "src/valorant.y"
+                                      { (yyval.ast_node) = create_while_node((yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
+#line 1406 "build/valorant.tab.c"
+    break;
+
   case 37: /* input_statement: BREACH IDENTIFIER  */
-#line 144 "src/valorant.y"
+#line 153 "src/valorant.y"
                                      { 
         (yyval.ast_node) = create_input_node(create_identifier_node((yyvsp[0].string_val)));
         free((yyvsp[0].string_val));
     }
-#line 1409 "build/valorant.tab.c"
-    break;
-
-  case 38: /* output_statement: SOVA expression  */
-#line 151 "src/valorant.y"
-                                    { (yyval.ast_node) = create_output_node((yyvsp[0].ast_node)); }
 #line 1415 "build/valorant.tab.c"
     break;
 
-  case 39: /* return_statement: PLANT expression  */
-#line 155 "src/valorant.y"
-                                    { (yyval.ast_node) = (yyvsp[0].ast_node); }
+  case 38: /* output_statement: SOVA expression  */
+#line 160 "src/valorant.y"
+                                    { (yyval.ast_node) = create_output_node((yyvsp[0].ast_node)); }
 #line 1421 "build/valorant.tab.c"
     break;
 
+  case 39: /* return_statement: PLANT expression  */
+#line 164 "src/valorant.y"
+                                    { (yyval.ast_node) = (yyvsp[0].ast_node); }
+#line 1427 "build/valorant.tab.c"
+    break;
 
-#line 1425 "build/valorant.tab.c"
+
+#line 1431 "build/valorant.tab.c"
 
       default: break;
     }
@@ -1614,7 +1620,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 158 "src/valorant.y"
+#line 176 "src/valorant.y"
 
 
 void yyerror(const char* s) {

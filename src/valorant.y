@@ -42,6 +42,7 @@ ASTNode* root = NULL;
 %type <ast_node> if_statement while_statement
 %type <ast_node> input_statement output_statement
 %type <ast_node> block return_statement
+%type <ast_node> assignment
 
 /* Precedencia y asociatividad */
 %right '='
@@ -97,13 +98,21 @@ statement_list
 
 statement
     : declaration ';'                 { $$ = $1; }
-    | expression ';'                  { $$ = $1; }
+    | IDENTIFIER '=' expression ';'   {
+        ASTNode* node = create_node(NODE_ASSIGNMENT);
+        node->left = create_identifier_node($1);
+        node->right = $3;
+        $$ = node;
+    }
     | if_statement                    { $$ = $1; }
     | while_statement                 { $$ = $1; }
     | input_statement ';'             { $$ = $1; }
     | output_statement ';'            { $$ = $1; }
     | return_statement ';'            { $$ = $1; }
-    | DEFUSE ';'                      { $$ = NULL; /* break statement */ }
+    | DEFUSE ';'                      { 
+        ASTNode* node = create_node(NODE_DEFUSE);
+        $$ = node;
+    }
     ;
 
 declaration
@@ -153,6 +162,15 @@ output_statement
 
 return_statement
     : PLANT expression              { $$ = $2; }
+    ;
+
+assignment
+    : IDENTIFIER '=' expression {
+        ASTNode* node = create_node(NODE_ASSIGNMENT);
+        node->left = create_identifier_node($1);
+        node->right = $3;
+        $$ = node;
+    }
     ;
 
 %%

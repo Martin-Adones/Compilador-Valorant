@@ -7,18 +7,18 @@ if "%1"=="" (
     exit /b 1
 )
 
-if not exist "examples\%1.val" (
-    echo Error: El archivo examples\%1.val no existe
+if not exist "%1" (
+    echo Error: El archivo %1 no existe
     echo.
     echo Ejemplos disponibles:
     dir /b examples\*.val
     exit /b 1
 )
 
-echo Compilando y ejecutando %1.val...
+echo Compilando y ejecutando %1...
 echo.
 
-bin\valorant.exe < examples\%1.val
+bin\valorant.exe < %1
 if %ERRORLEVEL% neq 0 (
     echo.
     echo Error al ejecutar el ejemplo

@@ -47,8 +47,32 @@ int line_num = 1;
 }
 
 \"[^\"]*\"      {
-    yylval.string_val = strdup(yytext + 1);
-    yylval.string_val[strlen(yylval.string_val) - 1] = '\0';
+    char* str = strdup(yytext + 1);
+    str[strlen(str) - 1] = '\0';
+    
+    // Procesar caracteres de escape
+    char* processed = malloc(strlen(str) + 1);
+    int i = 0, j = 0;
+    
+    while (str[i]) {
+        if (str[i] == '\\' && str[i + 1]) {
+            switch (str[i + 1]) {
+                case 'n': processed[j++] = '\n'; break;
+                case 't': processed[j++] = '\t'; break;
+                case 'r': processed[j++] = '\r'; break;
+                case '\\': processed[j++] = '\\'; break;
+                case '"': processed[j++] = '"'; break;
+                default: processed[j++] = str[i + 1];
+            }
+            i += 2;
+        } else {
+            processed[j++] = str[i++];
+        }
+    }
+    processed[j] = '\0';
+    
+    free(str);
+    yylval.string_val = processed;
     return STRING_LITERAL;
 }
 

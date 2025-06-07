@@ -17,7 +17,8 @@ typedef enum {
     NODE_BLOCK,       // Bloque de código
     NODE_DECLARATION, // Declaración de variables
     NODE_INPUT,       // Entrada (scanf)
-    NODE_OUTPUT       // Salida (printf)
+    NODE_OUTPUT,      // Salida (printf)
+    NODE_DEFUSE      // Break
 } NodeType;
 
 // Tipos de datos
@@ -40,26 +41,31 @@ typedef enum {
     OP_SHARE     // share (asignación)
 } BinaryOp;
 
+typedef union {
+    int int_value;
+    float float_value;
+    char* string_value;
+    char* identifier;
+    BinaryOp op;
+    DataType type;
+} NodeValue;
+
 // Estructura base para un nodo del AST
 typedef struct ASTNode {
     NodeType type;
     DataType data_type;
-    union {
-        int int_value;
-        float float_value;
-        char* string_value;
-        BinaryOp op;
-    } value;
+    NodeValue value;
     struct ASTNode* left;
     struct ASTNode* right;
     struct ASTNode* next;  // Para listas de instrucciones
 } ASTNode;
 
 // Funciones de creación de nodos
+ASTNode* create_node(NodeType type);
 ASTNode* create_number_node(int value);
 ASTNode* create_float_node(float value);
 ASTNode* create_string_node(const char* value);
-ASTNode* create_identifier_node(const char* name);
+ASTNode* create_identifier_node(char* name);
 ASTNode* create_binary_op_node(BinaryOp op, ASTNode* left, ASTNode* right);
 ASTNode* create_assignment_node(ASTNode* left, ASTNode* right);
 ASTNode* create_if_node(ASTNode* condition, ASTNode* then_block, ASTNode* else_block);

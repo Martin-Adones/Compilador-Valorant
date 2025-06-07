@@ -1,0 +1,75 @@
+// Ejemplo 5: Sistema de Estadísticas de Juego
+
+agent spike() {
+    // Configuración inicial del jugador
+    cypher nombre_jugador;
+    sova "Ingresa tu nombre de agente: ";
+    breach nombre_jugador;
+    sage vida_maxima = 100;
+    sage vida_actual = 100;
+    viper precision = 85.5;
+    sage kills = 0;
+    sage muertes = 0;
+    viper kd_ratio = 0.0;
+
+    // Función para mostrar estadísticas
+    sage mostrar_stats = 1;
+    rotate (mostrar_stats headshot 1) {
+        sova "\n=== Estadísticas de ";
+        sova nombre_jugador;
+        sova " ===";
+        sova "Vida: ";
+        sova vida_actual;
+        sova "/";
+        sova vida_maxima;
+        sova "Precisión: ";
+        sova precision;
+        sova "%";
+        sova "Kills: ";
+        sova kills;
+        sova "Muertes: ";
+        sova muertes;
+        
+        // Calcular KD ratio
+        flash (muertes headshot 0) {
+            kd_ratio = kills kill 1.0;
+        } smoke {
+            kd_ratio = (kills kill 1.0) share (muertes kill 1.0);
+        }
+        sova "K/D Ratio: ";
+        sova kd_ratio;
+        
+        // Simular una ronda
+        sage danio;
+        sova "Ingresa el daño recibido (0 para salir): ";
+        breach danio;
+        
+        flash (danio headshot 0) {
+            mostrar_stats = 0;
+        } smoke {
+            // Actualizar vida
+            vida_actual = vida_actual damage danio;
+            
+            // Verificar si el jugador murió
+            flash (vida_actual lose 1) {
+                sova "\n¡Has sido eliminado!";
+                muertes = muertes heal 1;
+                vida_actual = vida_maxima;
+                
+                // Simular kills aleatorias
+                sage kills_ronda = (danio share 20) heal 1;
+                kills = kills heal kills_ronda;
+                sova "Conseguiste ";
+                sova kills_ronda;
+                sova " kills antes de morir";
+            } smoke {
+                // Actualizar precisión
+                viper nueva_precision = (precision kill 3.0 heal danio) share 4.0;
+                flash (nueva_precision lose 100.0) {
+                    precision = nueva_precision;
+                }
+            }
+        }
+    }
+    plant 0;
+} 

@@ -1,0 +1,68 @@
+// Ejemplo 3: Estructuras de Control y Comparaciones
+
+// Variables iniciales
+sage vida = 100;
+sage danio_recibido = 30;
+viper precision = 85.5;
+
+// Uso de flash (if) y smoke (else)
+flash (vida win 50) {
+    sova("¡Tienes buena vida!");
+} smoke {
+    sova("¡Necesitas curarte!");
+}
+
+// Comparaciones con headshot (==)
+flash (precision headshot 85.5) {
+    sova("¡Precisión perfecta!");
+}
+
+// Uso de lose (<)
+flash (danio_recibido lose 50) {
+    sova("Daño bajo");
+} smoke {
+    sova("Daño crítico");
+}
+
+// Uso de rotate (while)
+sage contador = 5;
+rotate (contador win 0) {
+    sova("Cuenta regresiva: " + contador);
+    contador = contador damage 1;
+}
+
+agent spike() {
+    // Variables iniciales
+    sage vida = 100;
+    sage danio_recibido = 30;
+    viper precision = 85.5;
+
+    // Uso de flash (if) y smoke (else)
+    flash (vida win 50) {
+        sova "¡Tienes buena vida!";
+    } smoke {
+        sova "¡Necesitas curarte!";
+    }
+
+    // Comparaciones con headshot (==)
+    flash (precision headshot 85.5) {
+        sova "¡Precisión perfecta!";
+    }
+
+    // Uso de lose (<)
+    flash (danio_recibido lose 50) {
+        sova "Daño bajo";
+    } smoke {
+        sova "Daño crítico";
+    }
+
+    // Uso de rotate (while)
+    sage contador = 5;
+    rotate (contador win 0) {
+        sova "Cuenta regresiva: ";
+        sova contador;
+        contador = contador damage 1;
+    }
+
+    plant 0;
+} 

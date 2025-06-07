@@ -75,8 +75,13 @@ Value interpret_node(void* node, ExecutionContext* context) {
     
     switch(ast_node->type) {
         case NODE_NUMBER: {
-            result.type = TYPE_SAGE;
-            result.value.sage_val = ast_node->value.int_value;
+            if (ast_node->data_type == TYPE_INT) {
+                result.type = TYPE_SAGE;
+                result.value.sage_val = ast_node->value.int_value;
+            } else if (ast_node->data_type == TYPE_FLOAT) {
+                result.type = TYPE_VIPER;
+                result.value.viper_val = ast_node->value.float_value;
+            }
             break;
         }
         case NODE_STRING: {
@@ -97,12 +102,8 @@ Value interpret_node(void* node, ExecutionContext* context) {
             Value left = interpret_node(ast_node->left, context);
             Value right = interpret_node(ast_node->right, context);
             
-            if (left.type != right.type) {
-                report_error(context, "Error de tipos en operación binaria");
-                break;
-            }
+            result.type = TYPE_SAGE;  // Todas las operaciones retornan sage (int)
             
-            result.type = left.type;
             switch(ast_node->value.op) {
                 case OP_ADD: // heal
                     result.value.sage_val = left.value.sage_val + right.value.sage_val;
@@ -115,13 +116,13 @@ Value interpret_node(void* node, ExecutionContext* context) {
                     break;
                 case OP_DIV: // share
                     if (right.value.sage_val == 0) {
-                        report_error(context, "División por cero");
+                        report_error(context, "Error: División por cero");
                         break;
                     }
                     result.value.sage_val = left.value.sage_val % right.value.sage_val;
                     break;
-                case OP_WIN: // win (OR lógico)
-                    result.value.sage_val = left.value.sage_val || right.value.sage_val;
+                case OP_WIN: // win (>)
+                    result.value.sage_val = left.value.sage_val > right.value.sage_val;
                     break;
                 case OP_LOSE: // lose (<)
                     result.value.sage_val = left.value.sage_val < right.value.sage_val;
@@ -148,7 +149,36 @@ Value interpret_node(void* node, ExecutionContext* context) {
             while (1) {
                 Value condition = interpret_node(ast_node->left, context);
                 if (!condition.value.sage_val) break;
-                result = interpret_node(ast_node->right, context);
+                
+                ASTNode* current = ast_node->right;
+                if (current->type == NODE_BLOCK) {
+                    ASTNode* block_stmt = current->left;
+                    while (block_stmt) {
+                        if (block_stmt->type == NODE_DEFUSE) {
+                            return result;  // Salir inmediatamente del bucle
+                        }
+                        result = interpret_node(block_stmt, context);
+                        if (block_stmt->type == NODE_IF) {
+                            // Si es un if, verificar si tiene un defuse en su bloque
+                            ASTNode* if_block = block_stmt->right;
+                            if (if_block && if_block->type == NODE_BLOCK) {
+                                ASTNode* if_stmt = if_block->left;
+                                while (if_stmt) {
+                                    if (if_stmt->type == NODE_DEFUSE) {
+                                        return result;  // Salir inmediatamente del bucle
+                                    }
+                                    if_stmt = if_stmt->next;
+                                }
+                            }
+                        }
+                        block_stmt = block_stmt->next;
+                    }
+                } else {
+                    if (current->type == NODE_DEFUSE) {
+                        return result;  // Salir inmediatamente del bucle
+                    }
+                    result = interpret_node(current, context);
+                }
             }
             break;
         }
@@ -199,6 +229,8 @@ Value interpret_node(void* node, ExecutionContext* context) {
             result = input_value;
             break;
         }
+        case NODE_DEFUSE:
+            return result;  // Simplemente retornar el último resultado
     }
     
     return result;
