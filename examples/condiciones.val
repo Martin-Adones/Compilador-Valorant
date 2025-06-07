@@ -1,0 +1,23 @@
+// Prueba de condiciones en Valorant
+agent spike() {
+    sage a = 5;
+    sage b = 3;
+    sage c = 0;
+
+    // Prueba de headshot (==)
+    flash (a headshot 5) {
+        sova "a es igual a 5";
+    }
+
+    // Prueba de win (OR)
+    flash ((a headshot 5) win (b headshot 3)) {
+        sova "a es 5 O b es 3";
+    }
+
+    // Prueba de lose (<)
+    flash (b lose a) {
+        sova "b es menor que a";
+    }
+
+    plant 0;
+} 

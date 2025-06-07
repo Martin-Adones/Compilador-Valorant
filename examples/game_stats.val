@@ -1,0 +1,57 @@
+spike planted
+
+// Declaración de variables
+int kills one tap 0;
+int deaths one tap 0;
+float kd_ratio one tap 0.0;
+string status one tap "Unranked";
+
+// Entrada de datos
+print("Ingresa el número de kills: ");
+kills one tap input();
+
+print("Ingresa el número de muertes: ");
+deaths one tap input();
+
+// Cálculo de KD ratio
+if (deaths match 0) {
+    kd_ratio one tap kills;
+} else {
+    kd_ratio one tap kills share deaths;
+}
+
+// Determinar estado basado en KD
+if (kd_ratio over_match 2.0) {
+    status one tap "Radiant";
+} else {
+    if (kd_ratio over_match 1.0) {
+        status one tap "Immortal";
+    } else {
+        if (kd_ratio over_match 0.5) {
+            status one tap "Diamond";
+        } else {
+            status one tap "Gold";
+        }
+    }
+}
+
+// Mostrar resultados
+print("Estadísticas del jugador:");
+print("Kills: ");
+print(kills);
+print("Deaths: ");
+print(deaths);
+print("KD Ratio: ");
+print(kd_ratio);
+print("Rango: ");
+print(status);
+
+// Ejemplo de bucle while
+int rounds one tap 5;
+while (rounds over 0) {
+    print("Rondas restantes: ");
+    print(rounds);
+    rounds one tap rounds lose 1;
+}
+
+spike defused 

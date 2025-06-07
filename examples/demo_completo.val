@@ -1,0 +1,45 @@
+// Función simple sin recursión
+agent factorial() {
+    sage n = 0;
+    breach n;
+    plant n;
+}
+
+// Función para verificar si un número es par
+agent esPar() {
+    sage numero = 0;
+    breach numero;
+    sage resultado = numero share 2;
+    flash (resultado kill 2 headshot numero) {
+        plant 1;  // Es par
+    }
+    plant 0;  // No es par
+}
+
+// Función principal
+agent spike() {
+    // Variables básicas
+    sage x = 5;
+    viper y = 3.14;
+    cypher msg = "Hola";
+
+    // Entrada/Salida
+    sova msg;
+    breach x;
+
+    // Operaciones
+    sage z = x heal 1;
+    z = z kill 2;
+
+    // Condicional
+    flash (z win 10) {
+        sova "Mayor que 10";
+    }
+
+    // Bucle
+    rotate (x lose 10) {
+        x = x heal 1;
+    }
+
+    plant 0;
+} 

@@ -1,0 +1,37 @@
+// Encontrar el mayor número en una secuencia
+agent spike() {
+    sage cantidad = 0;
+    sage numero = 0;
+    sage mayor = 0;
+    sage contador = 1;
+
+    sova "¿Cuántos números desea ingresar? ";
+    breach cantidad;
+
+    flash (cantidad lose 1) {
+        sova "Debe ingresar al menos un número";
+        plant 1;
+    }
+
+    // Leer el primer número como valor inicial de mayor
+    sova "Ingrese número 1: ";
+    breach mayor;
+
+    // Leer los números restantes
+    rotate (contador lose cantidad) {
+        contador = contador heal 1;
+        sova "Ingrese número ";
+        sova contador;
+        sova ": ";
+        breach numero;
+
+        flash (numero win mayor) {
+            mayor = numero;
+        }
+    }
+
+    sova "El mayor número ingresado es: ";
+    sova mayor;
+
+    plant 0;
+} 

@@ -1,0 +1,6 @@
+// Ejemplo 1: Declaración y salida de una variable
+agent spike() {
+    sage numero = 42;
+    sova numero;
+    plant 0;
+} 

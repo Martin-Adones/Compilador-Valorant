@@ -1,0 +1,23 @@
+// Ejemplo 2: Operaciones aritméticas
+agent spike() {
+    sage a = 10;
+    sage b = 5;
+    
+    // Suma (heal)
+    sage suma = a heal b;
+    sova suma;
+    
+    // Resta (damage)
+    sage resta = a damage b;
+    sova resta;
+    
+    // Multiplicación (kill)
+    sage mult = a kill b;
+    sova mult;
+    
+    // División/Módulo (share)
+    sage mod = a share b;
+    sova mod;
+    
+    plant 0;
+} 

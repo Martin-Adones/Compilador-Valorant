@@ -1,0 +1,26 @@
+// FizzBuzz en Valorant
+agent spike() {
+    sage i = 1;
+    sage limite = 100;
+
+    rotate (i lose limite) {
+        sage mod3 = i share 3;
+        sage mod5 = i share 5;
+
+        flash (mod3 headshot 0) {
+            flash (mod5 headshot 0) {
+                sova "FizzBuzz";
+            } smoke {
+                sova "Fizz";
+            }
+        } smoke {
+            flash (mod5 headshot 0) {
+                sova "Buzz";
+            } smoke {
+                sova i;
+            }
+        }
+        i = i heal 1;
+    }
+    plant 0;
+} 

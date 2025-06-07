@@ -1,0 +1,12 @@
+// Ejemplo 4: Bucle rotate
+agent spike() {
+    sage i = 1;
+    sage limite = 5;
+    
+    rotate (i lose limite) {
+        sova i;
+        i = i heal 1;
+    }
+    
+    plant 0;
+} 

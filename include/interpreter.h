@@ -1,0 +1,48 @@
+#ifndef INTERPRETER_H
+#define INTERPRETER_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "ast.h"
+
+// Tipos de valores
+typedef enum {
+    TYPE_SAGE,    // int
+    TYPE_VIPER,   // float
+    TYPE_CYPHER   // string
+} ValueType;
+
+// Estructura para almacenar valores
+typedef struct {
+    ValueType type;
+    union {
+        int sage_val;
+        float viper_val;
+        char* cypher_val;
+    } value;
+} Value;
+
+// Estructura para variables
+typedef struct Variable {
+    char* name;
+    Value value;
+    struct Variable* next;
+} Variable;
+
+// Contexto de ejecución
+typedef struct {
+    Variable* variables;
+    int error_count;
+    char error_message[256];
+} ExecutionContext;
+
+// Funciones del intérprete
+ExecutionContext* create_context();
+void free_context(ExecutionContext* context);
+void set_variable(ExecutionContext* context, const char* name, Value value);
+Value* get_variable(ExecutionContext* context, const char* name);
+void report_error(ExecutionContext* context, const char* message);
+Value interpret_node(void* node, ExecutionContext* context);
+
+#endif // INTERPRETER_H 

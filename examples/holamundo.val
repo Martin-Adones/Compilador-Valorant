@@ -1,0 +1,6 @@
+// Hola Mundo en Valorant
+agent spike() {
+    cypher mensaje = "¡Hola Mundo!";
+    sova mensaje;
+    plant 0;
+}

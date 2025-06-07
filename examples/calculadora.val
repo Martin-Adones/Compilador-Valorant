@@ -1,0 +1,59 @@
+// Calculadora simple
+agent spike() {
+    sage opcion = 0;
+    sage num1 = 0;
+    sage num2 = 0;
+    viper resultado = 0.0;
+
+    rotate (opcion lose 5) {
+        sova "Calculadora Valorant";
+        sova "1. Suma (heal)";
+        sova "2. Resta (damage)";
+        sova "3. Multiplicación (kill)";
+        sova "4. División (share)";
+        sova "5. Salir";
+        sova "Elija una opción: ";
+        breach opcion;
+
+        flash (opcion headshot 5) {
+            plant 0;
+        }
+
+        flash (opcion win 0) {
+            flash (opcion lose 5) {
+                sova "Ingrese primer número: ";
+                breach num1;
+                sova "Ingrese segundo número: ";
+                breach num2;
+
+                flash (opcion headshot 1) {
+                    resultado = num1 heal num2;
+                    sova "Resultado: ";
+                    sova resultado;
+                }
+                flash (opcion headshot 2) {
+                    resultado = num1 damage num2;
+                    sova "Resultado: ";
+                    sova resultado;
+                }
+                flash (opcion headshot 3) {
+                    resultado = num1 kill num2;
+                    sova "Resultado: ";
+                    sova resultado;
+                }
+                flash (opcion headshot 4) {
+                    flash (num2 headshot 0) {
+                        sova "Error: División por cero";
+                    } smoke {
+                        resultado = num1 share num2;
+                        sova "Resultado: ";
+                        sova resultado;
+                    }
+                }
+            } smoke {
+                sova "Opción inválida";
+            }
+        }
+    }
+    plant 0;
+} 
