@@ -12,7 +12,7 @@ El Compilador Valorant es un lenguaje de programación inspirado en el juego Val
 
 ### 1. Tipos de Datos
 - `sage`: Números enteros
-- `viper`: Números decimales
+- `viper`: Números decimales (punto flotante)
 - `cypher`: Cadenas de texto
 
 ```
@@ -22,19 +22,28 @@ cypher texto = "Hola";   // Texto
 ```
 
 ### 2. Operadores
+#### Operadores Aritméticos
 - `heal`: Suma (+)
 - `damage`: Resta (-)
 - `kill`: Multiplicación (*)
 - `share`: División (/)
+
+#### Operadores de Comparación
 - `win`: Mayor que (>)
 - `lose`: Menor que (<)
 - `headshot`: Igual a (==)
 
 ```
-sage resultado = a heal b;    // Suma
-sage resta = x damage y;      // Resta
-sage producto = m kill n;     // Multiplicación
-sage division = p share q;    // División
+// Operaciones aritméticas
+viper resultado = a heal b;    // Suma
+viper resta = x damage y;      // Resta
+viper producto = m kill n;     // Multiplicación
+viper division = p share q;    // División
+
+// Comparaciones
+flash (puntuacion win 90) {    // Mayor que
+    sova "Excelente!";
+}
 ```
 
 ### 3. Estructuras de Control
@@ -71,8 +80,8 @@ rotate (i lose 10) {
 
 #### Entrada (Breach)
 ```
-sage numero;
-sova "Ingresa un número:";
+viper numero;
+sova "Ingresa un numero: ";
 breach numero;
 ```
 
@@ -95,41 +104,79 @@ agent spike() {
 
 ## Ejemplos Completos
 
-### 1. Calculadora Simple
+### 1. Calculadora Básica
 ```
 agent spike() {
-    sage num1;
-    sage num2;
+    // Variables para los números
+    viper num1;
+    viper num2;
     
-    sova "Ingresa primer número:";
+    sova "Ingresa primer numero: ";
     breach num1;
-    sova "Ingresa segundo número:";
+    sova "Ingresa segundo numero: ";
     breach num2;
-    
-    sova "Suma:";
+
+    sova "\nSuma: ";
     sova num1 heal num2;
     
-    sova "Resta:";
+    sova "\nResta: ";
     sova num1 damage num2;
     
-    sova "Multiplicación:";
+    sova "\nMultiplicacion: ";
     sova num1 kill num2;
     
-    sova "División:";
+    sova "\nDivision: ";
     sova num1 share num2;
-    
+
     plant 0;
 }
 ```
 
-### 2. Concatenación de Strings
+### 2. Calculadora Avanzada
 ```
 agent spike() {
-    cypher nombre = "Agente";
-    cypher apellido = "Valorant";
-    cypher nombre_completo = nombre heal apellido;
-    
-    sova nombre_completo;
+    viper num1;
+    viper num2;
+    viper resultado;
+    sage opcion;
+    cypher continuar = "si";
+
+    rotate (continuar headshot "si") {
+        sova "\n=== Calculadora Avanzada ===\n";
+        sova "1. Suma (heal)\n";
+        sova "2. Resta (damage)\n";
+        sova "3. Multiplicacion (kill)\n";
+        sova "4. Division (share)\n";
+        sova "Elige una opcion (1-4): ";
+        breach opcion;
+
+        sova "\nIngresa primer numero: ";
+        breach num1;
+        sova "Ingresa segundo numero: ";
+        breach num2;
+
+        flash (opcion headshot 1) {
+            resultado = num1 heal num2;
+        } smoke flash (opcion headshot 2) {
+            resultado = num1 damage num2;
+        } smoke flash (opcion headshot 3) {
+            resultado = num1 kill num2;
+        } smoke flash (opcion headshot 4) {
+            flash (num2 headshot 0) {
+                sova "Error: No se puede dividir por cero";
+            } smoke {
+                resultado = num1 share num2;
+            }
+        }
+
+        sova "\nResultado: ";
+        sova resultado;
+        sova "\n";
+
+        sova "Deseas realizar otra operacion? (si/no): ";
+        breach continuar;
+    }
+
     plant 0;
 }
 ```
@@ -139,19 +186,22 @@ agent spike() {
 - División por cero
 - Errores de sintaxis
 - Tipos incompatibles
+- Operaciones no válidas con strings
 
 ## Mejores Prácticas
-1. Siempre inicializa tus variables
-2. Usa nombres descriptivos
-3. Comenta tu código usando `//`
-4. Verifica la división por cero
-5. Maneja los errores apropiadamente
+1. Usa `viper` para números que puedan ser decimales
+2. Usa `sage` solo cuando estés seguro de que necesitas enteros
+3. Verifica la división por cero
+4. Usa saltos de línea (\n) para mejor formato
+5. Evita caracteres especiales en los mensajes
+6. Valida las entradas del usuario
+7. Usa comentarios para documentar tu código
 
 ## Limitaciones Actuales
 1. No soporta funciones con parámetros
 2. No hay soporte para arreglos
-3. Las operaciones entre tipos diferentes no están soportadas
-4. No hay soporte para operaciones de punto flotante complejas
+3. No hay soporte para operaciones de punto flotante complejas
+4. No hay soporte para entrada/salida de archivos
 
 ## Solución de Problemas
 Si encuentras errores, verifica:
@@ -159,4 +209,5 @@ Si encuentras errores, verifica:
 2. Que los tipos de datos sean compatibles
 3. Que no haya divisiones por cero
 4. Que todas las llaves y paréntesis estén balanceados
-5. Que cada sentencia termine con punto y coma 
+5. Que cada sentencia termine con punto y coma
+6. Que no uses caracteres especiales en los mensajes 
