@@ -42,7 +42,7 @@ ASTNode* root = NULL;
 %type <ast_node> if_statement while_statement
 %type <ast_node> input_statement output_statement
 %type <ast_node> block return_statement
-%type <ast_node> assignment
+%type <ast_node> assignment rest_if
 
 /* Precedencia y asociatividad */
 %right '='
@@ -119,6 +119,9 @@ declaration
     : SAGE IDENTIFIER '=' expression  { $$ = create_declaration_node(TYPE_INT, $2, $4); free($2); }
     | VIPER IDENTIFIER '=' expression { $$ = create_declaration_node(TYPE_FLOAT, $2, $4); free($2); }
     | CYPHER IDENTIFIER '=' expression { $$ = create_declaration_node(TYPE_STRING, $2, $4); free($2); }
+    | SAGE IDENTIFIER                 { $$ = create_declaration_node(TYPE_INT, $2, NULL); free($2); }
+    | VIPER IDENTIFIER               { $$ = create_declaration_node(TYPE_FLOAT, $2, NULL); free($2); }
+    | CYPHER IDENTIFIER              { $$ = create_declaration_node(TYPE_STRING, $2, NULL); free($2); }
     ;
 
 expression
@@ -143,6 +146,19 @@ expression
 if_statement
     : FLASH '(' expression ')' block              { $$ = create_if_node($3, $5, NULL); }
     | FLASH '(' expression ')' block SMOKE block  { $$ = create_if_node($3, $5, $7); }
+    | FLASH '(' expression ')' block SMOKE FLASH '(' expression ')' block rest_if  {
+        ASTNode* else_if = create_if_node($9, $11, $12);
+        $$ = create_if_node($3, $5, else_if);
+    }
+    ;
+
+rest_if
+    : /* empty */                                 { $$ = NULL; }
+    | SMOKE block                                 { $$ = $2; }
+    | SMOKE FLASH '(' expression ')' block rest_if {
+        ASTNode* else_if = create_if_node($4, $6, $7);
+        $$ = else_if;
+    }
     ;
 
 while_statement

@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
 #include "interpreter.h"
 #include "ast.h"
 
@@ -56,11 +60,22 @@ Value* get_variable(ExecutionContext* context, const char* name) {
     return NULL;
 }
 
+Variable* find_variable(ExecutionContext* context, const char* name) {
+    Variable* current = context->variables;
+    while (current) {
+        if (strcmp(current->name, name) == 0) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
 void report_error(ExecutionContext* context, const char* message) {
     context->error_count++;
     strncpy(context->error_message, message, sizeof(context->error_message) - 1);
     context->error_message[sizeof(context->error_message) - 1] = '\0';
-    printf("Error: %s\n", message);
+    fprintf(stderr, "Error: %s\n", message);
 }
 
 Value interpret_node(void* node, ExecutionContext* context) {
@@ -102,36 +117,79 @@ Value interpret_node(void* node, ExecutionContext* context) {
             Value left = interpret_node(ast_node->left, context);
             Value right = interpret_node(ast_node->right, context);
             
-            result.type = TYPE_SAGE;  // Todas las operaciones retornan sage (int)
+            // Si alguno es string, convertir el resultado a TYPE_SAGE
+            if (left.type == TYPE_CYPHER || right.type == TYPE_CYPHER) {
+                result.type = TYPE_SAGE;
+                switch(ast_node->value.op) {
+                    case OP_HEADSHOT: // headshot (==)
+                        if (left.type == TYPE_CYPHER && right.type == TYPE_CYPHER) {
+                            result.value.sage_val = strcmp(left.value.cypher_val, right.value.cypher_val) == 0;
+                        } else {
+                            result.value.sage_val = 0;  // false si los tipos no coinciden
+                        }
+                        break;
+                    default:
+                        report_error(context, "Operación no soportada con strings");
+                        break;
+                }
+                break;
+            }
+            
+            // Si alguno es decimal, convertir el resultado a TYPE_VIPER
+            result.type = (left.type == TYPE_VIPER || right.type == TYPE_VIPER) ? TYPE_VIPER : TYPE_SAGE;
+            
+            float left_val = (left.type == TYPE_VIPER) ? left.value.viper_val : (float)left.value.sage_val;
+            float right_val = (right.type == TYPE_VIPER) ? right.value.viper_val : (float)right.value.sage_val;
             
             switch(ast_node->value.op) {
                 case OP_ADD: // heal
-                    result.value.sage_val = left.value.sage_val + right.value.sage_val;
+                    if (result.type == TYPE_VIPER) {
+                        result.value.viper_val = left_val + right_val;
+                    } else {
+                        result.value.sage_val = left.value.sage_val + right.value.sage_val;
+                    }
                     break;
                 case OP_SUB: // damage
-                    result.value.sage_val = left.value.sage_val - right.value.sage_val;
+                    if (result.type == TYPE_VIPER) {
+                        result.value.viper_val = left_val - right_val;
+                    } else {
+                        result.value.sage_val = left.value.sage_val - right.value.sage_val;
+                    }
                     break;
                 case OP_MUL: // kill
-                    result.value.sage_val = left.value.sage_val * right.value.sage_val;
+                    if (result.type == TYPE_VIPER) {
+                        result.value.viper_val = left_val * right_val;
+                    } else {
+                        result.value.sage_val = left.value.sage_val * right.value.sage_val;
+                    }
                     break;
                 case OP_DIV: // share
-                    if (right.value.sage_val == 0) {
+                    if ((result.type == TYPE_VIPER && right_val == 0.0) ||
+                        (result.type == TYPE_SAGE && right.value.sage_val == 0)) {
                         report_error(context, "Error: División por cero");
                         break;
                     }
-                    result.value.sage_val = left.value.sage_val % right.value.sage_val;
+                    if (result.type == TYPE_VIPER) {
+                        result.value.viper_val = left_val / right_val;
+                    } else {
+                        result.value.sage_val = left.value.sage_val / right.value.sage_val;
+                    }
                     break;
                 case OP_WIN: // win (>)
-                    result.value.sage_val = left.value.sage_val > right.value.sage_val;
+                    result.type = TYPE_SAGE;
+                    result.value.sage_val = left_val > right_val;
                     break;
                 case OP_LOSE: // lose (<)
-                    result.value.sage_val = left.value.sage_val < right.value.sage_val;
+                    result.type = TYPE_SAGE;
+                    result.value.sage_val = left_val < right_val;
                     break;
                 case OP_HEADSHOT: // headshot (==)
-                    result.value.sage_val = left.value.sage_val == right.value.sage_val;
-                    break;
-                case OP_SHARE: // share (asignación)
-                    result = right;
+                    result.type = TYPE_SAGE;
+                    if (left.type == TYPE_VIPER || right.type == TYPE_VIPER) {
+                        result.value.sage_val = fabs(left_val - right_val) < 0.000001;
+                    } else {
+                        result.value.sage_val = left.value.sage_val == right.value.sage_val;
+                    }
                     break;
             }
             break;
@@ -201,15 +259,16 @@ Value interpret_node(void* node, ExecutionContext* context) {
             Value output_value = interpret_node(ast_node->left, context);
             switch(output_value.type) {
                 case TYPE_SAGE:
-                    printf("%d\n", output_value.value.sage_val);
+                    printf("%d", output_value.value.sage_val);
                     break;
                 case TYPE_VIPER:
-                    printf("%f\n", output_value.value.viper_val);
+                    printf("%.6f", output_value.value.viper_val);
                     break;
                 case TYPE_CYPHER:
-                    printf("%s\n", output_value.value.cypher_val);
+                    printf("%s", output_value.value.cypher_val);
                     break;
             }
+            fflush(stdout);  // Asegurar que la salida se muestre inmediatamente
             break;
         }
         case NODE_ASSIGNMENT: {
@@ -220,13 +279,38 @@ Value interpret_node(void* node, ExecutionContext* context) {
             break;
         }
         case NODE_INPUT: {
+            Value input_value;
+            char buffer[256];
             ASTNode* id_node = ast_node->left;
-            Value input_value = {0};
-            input_value.type = TYPE_SAGE; // Por ahora solo enteros
-            printf("Ingrese un valor: ");
-            scanf("%d", &input_value.value.sage_val);
-            set_variable(context, id_node->value.string_value, input_value);
-            result = input_value;
+            Variable* var = find_variable(context, id_node->value.string_value);
+            
+            if (!var) {
+                report_error(context, "Variable no declarada");
+                break;
+            }
+            
+            if (!fgets(buffer, sizeof(buffer), stdin)) {
+                report_error(context, "Error al leer la entrada");
+                break;
+            }
+            
+            buffer[strcspn(buffer, "\n")] = 0;  // Eliminar el salto de línea
+            
+            switch(var->value.type) {
+                case TYPE_SAGE:
+                    var->value.value.sage_val = atoi(buffer);
+                    break;
+                case TYPE_VIPER:
+                    var->value.value.viper_val = atof(buffer);
+                    break;
+                case TYPE_CYPHER:
+                    if (var->value.value.cypher_val) {
+                        free(var->value.value.cypher_val);
+                    }
+                    var->value.value.cypher_val = strdup(buffer);
+                    break;
+            }
+            result = var->value;
             break;
         }
         case NODE_DEFUSE:

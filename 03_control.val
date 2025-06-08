@@ -1,0 +1,39 @@
+// Test 03: Estructuras de Control
+agent spike() {
+    sage contador = 1;
+    sage limite = 5;
+    
+    sova "=== Prueba de ROTATE (while) ===";
+    rotate (contador lose limite) {
+        sova "Iteración: ";
+        sova contador;
+        contador = contador heal 1;
+    }
+    
+    sova "\n=== Prueba de FLASH/SMOKE (if/else) ===";
+    sage puntuacion = 85;
+    
+    flash (puntuacion win 90) {
+        sova "Excelente puntuación!";
+    } smoke flash (puntuacion win 80) {
+        sova "Muy buena puntuación!";
+    } smoke flash (puntuacion win 70) {
+        sova "Buena puntuación!";
+    } smoke {
+        sova "Necesitas mejorar";
+    }
+    
+    sova "\n=== Prueba de DEFUSE (break) ===";
+    sage i = 1;
+    rotate (i lose 10) {
+        flash (i headshot 5) {
+            sova "Encontrado el 5, deteniendo bucle";
+            defuse;
+        }
+        sova "Número actual: ";
+        sova i;
+        i = i heal 1;
+    }
+    
+    plant 0;
+} 

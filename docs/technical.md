@@ -1,115 +1,85 @@
-# Documentación Técnica del Compilador Valorant
+# Documentación Técnica - Compilador Valorant
 
-## Arquitectura del Compilador
+## Arquitectura del Sistema
 
-El compilador Valorant está implementado siguiendo una arquitectura de múltiples fases:
+El compilador Valorant está implementado como un intérprete que ejecuta el código directamente. La arquitectura se divide en las siguientes capas:
 
-1. **Análisis Léxico** (Flex)
-2. **Análisis Sintáctico** (Bison)
-3. **Análisis Semántico** (AST)
-4. **Interpretación** (Ejecución directa)
+### 1. Análisis Léxico (Flex)
+- Implementado en `src/valorant.l`
+- Convierte el código fuente en tokens
+- Define patrones para identificadores, literales y palabras clave
 
-### Diagrama de Componentes
+### 2. Análisis Sintáctico (Bison)
+- Implementado en `src/valorant.y`
+- Construye el árbol de sintaxis abstracta (AST)
+- Define la gramática del lenguaje
+
+### 3. Árbol de Sintaxis Abstracta (AST)
+- Implementado en `include/ast.h` y `src/ast.c`
+- Representa la estructura del programa
+- Facilita la interpretación del código
+
+### 4. Intérprete
+- Implementado en `include/interpreter.h` y `src/interpreter.c`
+- Ejecuta el código recorriendo el AST
+- Maneja el contexto de ejecución y las variables
+
+## Diagrama de Componentes
 
 ```mermaid
 graph TD
     A[Código Fuente .val] --> B[Analizador Léxico]
     B --> C[Analizador Sintáctico]
     C --> D[Árbol AST]
-    D --> E[Análisis Semántico]
-    E --> F[Intérprete]
-    F --> G[Salida del Programa]
+    D --> E[Intérprete]
+    E --> F[Salida]
 ```
 
-## 1. Análisis Léxico (valorant.l)
+## Tipos de Nodos AST
 
-### Tokens Definidos
-- Palabras clave: `agent`, `spike`, `plant`, `flash`, `smoke`, `rotate`
-- Tipos: `sage`, `viper`, `cypher`
-- Operadores: `heal`, `damage`, `kill`, `share`, `win`, `lose`, `headshot`
-- E/S: `breach`, `sova`
-- Símbolos: `{`, `}`, `(`, `)`, `;`, `=`
-- Literales: números enteros, decimales, cadenas
-
-### Manejo de Errores Léxicos
-- Caracteres no reconocidos
-- Cadenas sin cerrar
-- Números mal formados
-
-## 2. Análisis Sintáctico (valorant.y)
-
-### Gramática
-```yacc
-program : function_list
-        ;
-
-function_list : function
-              | function_list function
-              ;
-
-function : AGENT IDENTIFIER '(' param_list ')' block
-         ;
-
-block : '{' statement_list '}'
-      ;
-
-statement_list : statement
-               | statement_list statement
-               ;
-
-statement : declaration
-          | assignment
-          | if_statement
-          | while_statement
-          | return_statement
-          | io_statement
-          ;
-
-// ... más reglas gramaticales ...
-```
-
-### Manejo de Errores Sintácticos
-- Paréntesis/llaves sin cerrar
-- Errores de secuencia de tokens
-- Declaraciones incompletas
-
-## 3. Árbol de Sintaxis Abstracta (AST)
-
-### Tipos de Nodos
 ```c
 typedef enum {
-    NODE_NUMBER,
-    NODE_STRING,
-    NODE_IDENTIFIER,
-    NODE_BINARY_OP,
-    NODE_IF,
-    NODE_WHILE,
-    NODE_BLOCK,
-    NODE_DECLARATION,
-    NODE_OUTPUT,
-    // ... otros tipos
+    NODE_NUMBER,      // Números literales
+    NODE_STRING,      // Cadenas literales
+    NODE_IDENTIFIER,  // Identificadores
+    NODE_BINARY_OP,   // Operaciones binarias
+    NODE_ASSIGNMENT,  // Asignaciones
+    NODE_IF,          // Estructura if
+    NODE_WHILE,       // Estructura while
+    NODE_BLOCK,       // Bloque de código
+    NODE_DECLARATION, // Declaración de variables
+    NODE_INPUT,       // Entrada (breach)
+    NODE_OUTPUT,      // Salida (sova)
+    NODE_DEFUSE      // Break
 } NodeType;
 ```
 
-### Estructura de Nodos
+## Tipos de Datos
+
 ```c
-typedef struct ASTNode {
-    NodeType type;
-    union {
-        int number;
-        char* string;
-        struct {
-            struct ASTNode* left;
-            struct ASTNode* right;
-            int op;
-        } binary;
-        // ... otros tipos de valores
-    } value;
-    struct ASTNode* next;
-} ASTNode;
+typedef enum {
+    TYPE_SAGE,    // int
+    TYPE_VIPER,   // float
+    TYPE_CYPHER   // string
+} ValueType;
 ```
 
-## 4. Intérprete
+## Operadores Binarios
+
+```c
+typedef enum {
+    OP_ADD,      // heal
+    OP_SUB,      // damage
+    OP_MUL,      // kill
+    OP_DIV,      // share
+    OP_WIN,      // win (mayor que)
+    OP_LOSE,     // lose (menor que)
+    OP_HEADSHOT, // headshot (igual)
+    OP_SHARE     // share (asignación)
+} BinaryOp;
+```
+
+## Estructura del Intérprete
 
 ### Contexto de Ejecución
 ```c
@@ -120,14 +90,17 @@ typedef struct {
 } ExecutionContext;
 ```
 
-### Tipos de Datos en Tiempo de Ejecución
+### Variables
 ```c
-typedef enum {
-    TYPE_SAGE,   // int
-    TYPE_VIPER,  // float
-    TYPE_CYPHER  // string
-} ValueType;
+typedef struct Variable {
+    char* name;
+    Value value;
+    struct Variable* next;
+} Variable;
+```
 
+### Valores
+```c
 typedef struct {
     ValueType type;
     union {
@@ -138,125 +111,107 @@ typedef struct {
 } Value;
 ```
 
-### Manejo de Variables
-- Tabla de símbolos implementada como lista enlazada
-- Verificación de tipos en tiempo de ejecución
-- Gestión de memoria para strings
+## Proceso de Compilación
 
-## Análisis Semántico
+1. **Tokenización**
+   - El analizador léxico identifica tokens
+   - Maneja comentarios y espacios en blanco
+   - Reconoce identificadores y literales
 
-### Verificaciones Realizadas
-1. **Tipos**
-   - Compatibilidad en operaciones
-   - Asignaciones válidas
-   - Conversiones implícitas
+2. **Parsing**
+   - Construye el AST según la gramática
+   - Verifica la sintaxis del programa
+   - Maneja errores sintácticos
 
-2. **Variables**
-   - Declaración antes de uso
-   - No redeclaración en el mismo ámbito
-   - Inicialización adecuada
-
-3. **Operaciones**
-   - División por cero
-   - Operadores aplicados a tipos correctos
-   - Condiciones booleanas en if/while
-
-## Optimizaciones
-
-### Actuales
-- Evaluación de constantes en tiempo de compilación
-- Eliminación de código muerto simple
-
-### Futuras Mejoras
-1. Propagación de constantes
-2. Eliminación de código muerto avanzada
-3. Optimización de bucles
-4. Análisis de flujo de datos
-
-## Gestión de Memoria
-
-### Estrategias
-1. **Asignación**
-   - Uso de malloc/free para nodos AST
-   - Gestión de strings dinámicos
-   - Tabla de símbolos dinámica
-
-2. **Liberación**
-   - Limpieza recursiva del AST
-   - Liberación de variables al salir de ámbito
-   - Manejo de memoria en strings
-
-### Prevención de Fugas
-- Seguimiento de asignaciones
-- Liberación sistemática en errores
-- Verificación con herramientas (valgrind)
+3. **Interpretación**
+   - Recorre el AST recursivamente
+   - Ejecuta las operaciones
+   - Maneja el contexto y las variables
 
 ## Manejo de Errores
 
-### Niveles de Error
-1. **Léxico**: Caracteres y tokens inválidos
-2. **Sintáctico**: Estructura del programa incorrecta
-3. **Semántico**: Errores de tipos y variables
-4. **Ejecución**: Errores en tiempo de ejecución
+### Errores Léxicos
+- Caracteres inválidos
+- Strings sin cerrar
+- Números mal formados
 
-### Recuperación de Errores
-- Modo pánico en errores sintácticos
-- Continuación después de errores no fatales
-- Limpieza de recursos en errores fatales
+### Errores Sintácticos
+- Estructura incorrecta
+- Paréntesis/llaves sin balancear
+- Tokens inesperados
 
-## Pruebas
+### Errores de Ejecución
+- Variables no declaradas
+- División por cero
+- Tipos incompatibles
+- Desbordamiento de memoria
 
-### Suite de Pruebas
-1. **Unitarias**
-   - Análisis léxico
-   - Análisis sintáctico
-   - Construcción del AST
-   - Interpretación
+## Extensibilidad
 
-2. **Integración**
-   - Flujo completo del compilador
-   - Manejo de errores
-   - Casos límite
+### Agregar Nuevos Tipos
+1. Añadir al enum `ValueType`
+2. Actualizar la unión en `Value`
+3. Modificar las funciones de interpretación
 
-3. **Ejemplos**
-   - FizzBuzz
-   - Factorial
-   - Calculadora
-   - Mayor Número
+### Agregar Nuevos Operadores
+1. Añadir al enum `BinaryOp`
+2. Actualizar la gramática en `valorant.y`
+3. Implementar la operación en el intérprete
 
-## Rendimiento
+### Agregar Nuevas Estructuras
+1. Añadir al enum `NodeType`
+2. Crear funciones de creación de nodos
+3. Actualizar la gramática
+4. Implementar la interpretación
 
-### Métricas
-- Tiempo de compilación
-- Uso de memoria
-- Tiempo de ejecución
-- Complejidad del AST
+## Optimizaciones Futuras
 
-### Limitaciones Actuales
-1. Sin optimizaciones avanzadas
-2. Interpretación vs compilación
-3. Manejo de memoria simple
+1. **Evaluación Constante**
+   - Evaluar expresiones constantes en tiempo de compilación
+   - Reducir operaciones redundantes
 
-## Futuras Mejoras
+2. **Manejo de Memoria**
+   - Implementar un recolector de basura
+   - Optimizar la asignación de memoria
 
-1. **Técnicas**
-   - Generación de código nativo
-   - Optimizaciones avanzadas
-   - Análisis de flujo de datos
+3. **Caché de Variables**
+   - Implementar un sistema de caché para variables frecuentes
+   - Reducir búsquedas en la tabla de símbolos
 
-2. **Funcionalidad**
-   - Más tipos de datos
-   - Funciones de biblioteca estándar
-   - Módulos y namespaces
+4. **Paralelización**
+   - Ejecutar bloques independientes en paralelo
+   - Optimizar operaciones vectoriales
 
-3. **Herramientas**
-   - Depurador integrado
-   - Perfilador
-   - Formateo de código
+## Limitaciones Conocidas
 
-## Referencias
+1. **Funciones**
+   - No hay soporte para parámetros
+   - No hay recursión
+   - No hay retorno de valores complejos
 
-1. Flex Manual: [https://westes.github.io/flex/manual/](https://westes.github.io/flex/manual/)
-2. Bison Manual: [https://www.gnu.org/software/bison/manual/](https://www.gnu.org/software/bison/manual/)
-3. Dragon Book: Compilers: Principles, Techniques, and Tools
-4. Modern Compiler Implementation in C 
+2. **Tipos de Datos**
+   - No hay tipos compuestos
+   - No hay conversión automática de tipos
+   - No hay arreglos o estructuras
+
+3. **Optimización**
+   - No hay optimización de código
+   - No hay análisis de flujo de datos
+   - No hay eliminación de código muerto
+
+## Guía de Contribución
+
+1. **Estilo de Código**
+   - Usar indentación consistente
+   - Documentar funciones y estructuras
+   - Seguir convenciones de nombres
+
+2. **Pruebas**
+   - Crear casos de prueba para nuevas características
+   - Verificar regresiones
+   - Documentar comportamiento esperado
+
+3. **Documentación**
+   - Actualizar la documentación técnica
+   - Mantener ejemplos actualizados
+   - Documentar cambios en el API 

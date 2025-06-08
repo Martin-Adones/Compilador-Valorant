@@ -44,5 +44,6 @@ void set_variable(ExecutionContext* context, const char* name, Value value);
 Value* get_variable(ExecutionContext* context, const char* name);
 void report_error(ExecutionContext* context, const char* message);
 Value interpret_node(void* node, ExecutionContext* context);
+Variable* find_variable(ExecutionContext* context, const char* name);
 
 #endif // INTERPRETER_H 

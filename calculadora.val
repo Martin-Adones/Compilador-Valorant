@@ -1,0 +1,25 @@
+// Calculadora Básica Valorant
+agent spike() {
+    // Variables para los números
+    viper num1;
+    viper num2;
+    
+    sova "Ingresa primer numero: ";
+    breach num1;
+    sova "Ingresa segundo numero: ";
+    breach num2;
+
+    sova "\nSuma: ";
+    sova num1 heal num2;
+    
+    sova "\nResta: ";
+    sova num1 damage num2;
+    
+    sova "\nMultiplicacion: ";
+    sova num1 kill num2;
+    
+    sova "\nDivision: ";
+    sova num1 share num2;
+
+    plant 0;
+}

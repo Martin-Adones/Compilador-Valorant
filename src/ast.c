@@ -81,7 +81,26 @@ ASTNode* create_declaration_node(DataType type, const char* name, ASTNode* initi
     ASTNode* node = create_node(NODE_DECLARATION);
     node->data_type = type;
     node->value.string_value = strdup(name);
-    node->right = initial_value;
+    
+    if (initial_value) {
+        node->right = initial_value;
+    } else {
+        // Crear un valor por defecto según el tipo
+        switch(type) {
+            case TYPE_INT:
+                node->right = create_number_node(0);
+                break;
+            case TYPE_FLOAT:
+                node->right = create_float_node(0.0);
+                break;
+            case TYPE_STRING:
+                node->right = create_string_node("");
+                break;
+            default:
+                node->right = NULL;
+        }
+    }
+    
     return node;
 }
 

@@ -1,274 +1,162 @@
-# Manual de Usuario - Lenguaje Valorant
+# Manual de Usuario - Compilador Valorant
 
 ## Introducción
+El Compilador Valorant es un lenguaje de programación inspirado en el juego Valorant, donde los elementos del juego se convierten en estructuras y comandos de programación.
 
-Bienvenido al manual de usuario del lenguaje de programación Valorant. Este lenguaje está diseñado para ser intuitivo y divertido, utilizando terminología del juego Valorant para representar conceptos de programación comunes.
+## Instalación
+1. Clona el repositorio
+2. Ejecuta `setup.bat` para instalar las dependencias
+3. Usa `make` para compilar el proyecto
 
-## Primeros Pasos
-
-### Instalación
-
-1. Asegúrate de tener instalados los requisitos:
-   - GCC (GNU Compiler Collection)
-   - Flex
-   - Bison
-
-2. Compila el compilador:
-```bash
-gcc -o valorant src/*.c -I src/
-```
-
-### Tu Primer Programa
-
-Crea un archivo `hola_mundo.val`:
-
-```
-agent spike() {
-    sova "¡Hola, Agente!";
-    plant 0;
-}
-```
-
-Ejecútalo:
-```bash
-./valorant < hola_mundo.val
-```
-
-## Guía del Lenguaje
+## Sintaxis Básica
 
 ### 1. Tipos de Datos
+- `sage`: Números enteros
+- `viper`: Números decimales
+- `cypher`: Cadenas de texto
 
-#### sage (enteros)
 ```
-sage numero = 42;
-sage contador = 0;
-sage negativo = -10;
-```
-
-#### viper (decimales)
-```
-viper pi = 3.14159;
-viper temperatura = -2.5;
-```
-
-#### cypher (texto)
-```
-cypher mensaje = "Spike plantado!";
-cypher nombre = "Sage";
+sage numero = 42;        // Entero
+viper decimal = 3.14;    // Decimal
+cypher texto = "Hola";   // Texto
 ```
 
 ### 2. Operadores
+- `heal`: Suma (+)
+- `damage`: Resta (-)
+- `kill`: Multiplicación (*)
+- `share`: División (/)
+- `win`: Mayor que (>)
+- `lose`: Menor que (<)
+- `headshot`: Igual a (==)
 
-#### Aritméticos
-- `heal`: Suma
-  ```
-  sage total = 5 heal 3;  // total = 8
-  ```
-- `damage`: Resta
-  ```
-  sage diferencia = 10 damage 4;  // diferencia = 6
-  ```
-- `kill`: Multiplicación
-  ```
-  sage producto = 6 kill 7;  // producto = 42
-  ```
-- `share`: División
-  ```
-  sage cociente = 15 share 3;  // cociente = 5
-  ```
-
-#### Comparación
-- `win`: Mayor que
-  ```
-  flash (10 win 5) {
-      sova "10 es mayor que 5";
-  }
-  ```
-- `lose`: Menor que
-  ```
-  flash (3 lose 7) {
-      sova "3 es menor que 7";
-  }
-  ```
-- `headshot`: Igual a
-  ```
-  flash (score headshot 100) {
-      sova "¡Puntuación perfecta!";
-  }
-  ```
+```
+sage resultado = a heal b;    // Suma
+sage resta = x damage y;      // Resta
+sage producto = m kill n;     // Multiplicación
+sage division = p share q;    // División
+```
 
 ### 3. Estructuras de Control
 
-#### Condicionales (flash/smoke)
+#### If-Else (Flash-Smoke)
 ```
-flash (energia win 50) {
-    sova "Energía alta";
+flash (puntuacion win 90) {
+    sova "Excelente!";
+} smoke flash (puntuacion win 80) {
+    sova "Muy bien!";
 } smoke {
-    sova "Energía baja";
+    sova "Sigue intentando";
 }
 ```
 
-#### Bucles (rotate)
+#### While (Rotate)
 ```
-sage contador = 0;
 rotate (contador lose 5) {
     sova contador;
     contador = contador heal 1;
 }
 ```
 
+#### Break (Defuse)
+```
+rotate (i lose 10) {
+    flash (i headshot 5) {
+        defuse;    // Sale del bucle
+    }
+}
+```
+
 ### 4. Entrada/Salida
 
-#### Salida (sova)
+#### Entrada (Breach)
 ```
-sova "Mensaje directo";
-sage numero = 42;
-sova numero;
+sage numero;
+sova "Ingresa un número:";
+breach numero;
 ```
 
-#### Entrada (breach)
+#### Salida (Sova)
 ```
-sage valor;
-sova "Ingresa un número:";
-breach valor;
+sova "Mensaje directo";
+sova variable;
 ```
 
 ### 5. Funciones
 
-#### Definición de Funciones
-```
-agent calcular_suma(sage a, sage b) {
-    sage resultado = a heal b;
-    plant resultado;
-}
-```
-
 #### Función Principal
+Cada programa debe tener una función `spike()`:
 ```
 agent spike() {
     // Código principal aquí
-    plant 0;
+    plant 0;    // Retorna 0
 }
 ```
 
-## Ejemplos Prácticos
+## Ejemplos Completos
 
 ### 1. Calculadora Simple
 ```
 agent spike() {
     sage num1;
     sage num2;
-    sage opcion;
-    
-    sova "Calculadora Valorant";
-    sova "1. Heal (Suma)";
-    sova "2. Damage (Resta)";
-    sova "3. Kill (Multiplicación)";
-    sova "4. Share (División)";
-    
-    sova "Elige una opción:";
-    breach opcion;
     
     sova "Ingresa primer número:";
     breach num1;
     sova "Ingresa segundo número:";
     breach num2;
     
-    flash (opcion headshot 1) {
-        sova num1 heal num2;
-    } smoke flash (opcion headshot 2) {
-        sova num1 damage num2;
-    } smoke flash (opcion headshot 3) {
-        sova num1 kill num2;
-    } smoke flash (opcion headshot 4) {
-        flash (num2 headshot 0) {
-            sova "Error: División por cero";
-        } smoke {
-            sova num1 share num2;
-        }
-    }
+    sova "Suma:";
+    sova num1 heal num2;
+    
+    sova "Resta:";
+    sova num1 damage num2;
+    
+    sova "Multiplicación:";
+    sova num1 kill num2;
+    
+    sova "División:";
+    sova num1 share num2;
     
     plant 0;
 }
 ```
 
-### 2. Factorial
+### 2. Concatenación de Strings
 ```
-agent factorial(sage n) {
-    flash (n lose 2) {
-        plant 1;
-    }
-    plant n kill factorial(n damage 1);
-}
-
 agent spike() {
-    sage numero;
-    sova "Ingresa un número para calcular su factorial:";
-    breach numero;
-    sova factorial(numero);
+    cypher nombre = "Agente";
+    cypher apellido = "Valorant";
+    cypher nombre_completo = nombre heal apellido;
+    
+    sova nombre_completo;
     plant 0;
 }
 ```
 
-## Manejo de Errores Comunes
+## Manejo de Errores
+- Variables no declaradas
+- División por cero
+- Errores de sintaxis
+- Tipos incompatibles
 
-### 1. Errores Sintácticos
-```
-// Incorrecto
-agent spike() {
-    sage x = 5
-    sova x;  // Falta punto y coma
-}
+## Mejores Prácticas
+1. Siempre inicializa tus variables
+2. Usa nombres descriptivos
+3. Comenta tu código usando `//`
+4. Verifica la división por cero
+5. Maneja los errores apropiadamente
 
-// Correcto
-agent spike() {
-    sage x = 5;
-    sova x;
-}
-```
-
-### 2. Errores de Tipos
-```
-// Incorrecto
-sage numero = "42";  // No se puede asignar texto a un sage
-
-// Correcto
-sage numero = 42;
-cypher texto = "42";
-```
-
-### 3. Variables No Declaradas
-```
-// Incorrecto
-sova x;  // x no está declarada
-
-// Correcto
-sage x = 0;
-sova x;
-```
-
-## Consejos y Buenas Prácticas
-
-1. **Nombres Descriptivos**: Usa nombres de variables que indiquen su propósito
-2. **Indentación**: Mantén una indentación consistente para mejorar la legibilidad
-3. **Comentarios**: Documenta tu código con comentarios explicativos
-4. **Modularización**: Divide problemas grandes en funciones más pequeñas
-5. **Manejo de Errores**: Siempre verifica casos especiales (como división por cero)
+## Limitaciones Actuales
+1. No soporta funciones con parámetros
+2. No hay soporte para arreglos
+3. Las operaciones entre tipos diferentes no están soportadas
+4. No hay soporte para operaciones de punto flotante complejas
 
 ## Solución de Problemas
-
-### El programa no compila
-- Verifica que todos los puntos y comas estén en su lugar
-- Asegúrate de que todas las llaves estén correctamente balanceadas
-- Comprueba que las variables estén declaradas antes de usarlas
-
-### Errores en tiempo de ejecución
-- Verifica divisiones por cero
-- Comprueba que los tipos de datos sean compatibles en las operaciones
-- Asegúrate de que las variables tengan valores válidos
-
-## Recursos Adicionales
-
-- Código fuente: [GitHub Repository](https://github.com/tu-usuario/Compilador-Valorant)
-- Ejemplos adicionales: Carpeta `examples/` en el repositorio
-- Reportar problemas: Sección de Issues en GitHub 
+Si encuentras errores, verifica:
+1. Que todas las variables estén declaradas
+2. Que los tipos de datos sean compatibles
+3. Que no haya divisiones por cero
+4. Que todas las llaves y paréntesis estén balanceados
+5. Que cada sentencia termine con punto y coma 

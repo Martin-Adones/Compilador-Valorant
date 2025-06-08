@@ -1,0 +1,51 @@
+// Test 02: Operadores Aritméticos y de Comparación
+agent spike() {
+    // Prueba de operadores aritméticos
+    sage a = 10;
+    sage b = 3;
+    
+    sova "=== Prueba de Operadores Aritméticos ===";
+    sova "a = ";
+    sova a;
+    sova "b = ";
+    sova b;
+    
+    sage suma = a heal b;
+    sova "Suma (heal): ";
+    sova suma;
+    
+    sage resta = a damage b;
+    sova "Resta (damage): ";
+    sova resta;
+    
+    sage multiplicacion = a kill b;
+    sova "Multiplicación (kill): ";
+    sova multiplicacion;
+    
+    sage division = a share b;
+    sova "División (share): ";
+    sova division;
+    
+    // Prueba de operadores de comparación
+    sova "\n=== Prueba de Operadores de Comparación ===";
+    
+    flash (a win b) {
+        sova "a es mayor que b (win)";
+    }
+    
+    flash (a lose b) {
+        sova "a es menor que b (lose)";
+    }
+    
+    flash (a headshot b) {
+        sova "a es igual a b (headshot)";
+    }
+    
+    // Prueba de operadores combinados
+    sage c = (a heal b) kill 2;
+    sova "\n=== Prueba de Operadores Combinados ===";
+    sova "(a heal b) kill 2 = ";
+    sova c;
+    
+    plant 0;
+} 
