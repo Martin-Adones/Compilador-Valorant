@@ -123,16 +123,4 @@ El compilador detecta y reporta varios tipos de errores:
 3. **Errores Semánticos**: 
    - Variables no declaradas
    - Tipos incompatibles en operaciones
-   - División por cero
-
-## Contribuir
-
-1. Fork el proyecto
-2. Crea una rama para tu característica (`git checkout -b feature/nueva-caracteristica`)
-3. Commit tus cambios (`git commit -am 'Agrega nueva característica'`)
-4. Push a la rama (`git push origin feature/nueva-caracteristica`)
-5. Crea un Pull Request
-
-## Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles. 
+   - División por cero 
