@@ -13,12 +13,14 @@ typedef enum {
     NODE_BINARY_OP,   // Operaciones binarias
     NODE_ASSIGNMENT,  // Asignaciones
     NODE_IF,          // Estructura if
+    NODE_ELSE,        // Estructura else
     NODE_WHILE,       // Estructura while
     NODE_BLOCK,       // Bloque de código
     NODE_DECLARATION, // Declaración de variables
     NODE_INPUT,       // Entrada (scanf)
     NODE_OUTPUT,      // Salida (printf)
-    NODE_DEFUSE      // Break
+    NODE_DEFUSE,      // Break
+    NODE_PLANT        // Return
 } NodeType;
 
 // Tipos de datos
@@ -58,6 +60,7 @@ typedef struct ASTNode {
     struct ASTNode* left;
     struct ASTNode* right;
     struct ASTNode* next;  // Para listas de instrucciones
+    struct ASTNode* parent; // Referencia al nodo padre
 } ASTNode;
 
 // Funciones de creación de nodos

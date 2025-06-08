@@ -6,6 +6,31 @@
 #include "valorant.tab.h"
 
 int line_num = 1;
+
+// Función para procesar caracteres de escape
+char* process_escape_sequences(const char* str) {
+    char* result = malloc(strlen(str) + 1);
+    int i = 0, j = 0;
+    
+    while (str[i] != '\0') {
+        if (str[i] == '\\') {
+            i++;
+            switch (str[i]) {
+                case 'n': result[j++] = '\n'; break;
+                case 't': result[j++] = '\t'; break;
+                case 'r': result[j++] = '\r'; break;
+                case '\\': result[j++] = '\\'; break;
+                case '"': result[j++] = '"'; break;
+                default: result[j++] = str[i]; break;
+            }
+        } else {
+            result[j++] = str[i];
+        }
+        i++;
+    }
+    result[j] = '\0';
+    return result;
+}
 %}
 
 %option noyywrap
@@ -15,17 +40,17 @@ int line_num = 1;
 
 [ \t]+          ; /* Ignorar espacios y tabulaciones */
 [\n]            { line_num++; }
-"//".*          ; /* Ignorar comentarios de una línea */
+"//".*          ; /* Ignorar comentarios de una linea */
 
-"agent"         { return AGENT; }      /* Palabra clave para función */
+"agent"         { return AGENT; }      /* Palabra clave para funcion */
 "plant"         { return PLANT; }      /* Palabra clave para return */
 "win"           { return WIN; }        /* Mayor que */
 "lose"          { return LOSE; }       /* Menor que */
 "headshot"      { return HEADSHOT; }   /* Igual */
-"share"         { return SHARE; }      /* División */
+"share"         { return SHARE; }      /* Division */
 "heal"          { return HEAL; }       /* Suma */
 "damage"        { return DAMAGE; }     /* Resta */
-"kill"          { return KILL; }       /* Multiplicación */
+"kill"          { return KILL; }       /* Multiplicacion */
 "defuse"        { return DEFUSE; }     /* Break */
 "rotate"        { return ROTATE; }     /* While */
 "flash"         { return FLASH; }      /* If */
@@ -49,30 +74,8 @@ int line_num = 1;
 \"[^\"]*\"      {
     char* str = strdup(yytext + 1);
     str[strlen(str) - 1] = '\0';
-    
-    // Procesar caracteres de escape
-    char* processed = malloc(strlen(str) + 1);
-    int i = 0, j = 0;
-    
-    while (str[i]) {
-        if (str[i] == '\\' && str[i + 1]) {
-            switch (str[i + 1]) {
-                case 'n': processed[j++] = '\n'; break;
-                case 't': processed[j++] = '\t'; break;
-                case 'r': processed[j++] = '\r'; break;
-                case '\\': processed[j++] = '\\'; break;
-                case '"': processed[j++] = '"'; break;
-                default: processed[j++] = str[i + 1];
-            }
-            i += 2;
-        } else {
-            processed[j++] = str[i++];
-        }
-    }
-    processed[j] = '\0';
-    
+    yylval.string_val = process_escape_sequences(str);
     free(str);
-    yylval.string_val = processed;
     return STRING_LITERAL;
 }
 
@@ -89,6 +92,6 @@ int line_num = 1;
 ","             { return ','; }
 "="             { return '='; }
 
-.               { printf("Error léxico: caracter no reconocido '%s' en línea %d\n", yytext, line_num); }
+.               ; /* Ignorar caracteres no reconocidos */
 
 %%

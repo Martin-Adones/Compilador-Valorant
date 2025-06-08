@@ -145,19 +145,31 @@ expression
 
 if_statement
     : FLASH '(' expression ')' block              { $$ = create_if_node($3, $5, NULL); }
-    | FLASH '(' expression ')' block SMOKE block  { $$ = create_if_node($3, $5, $7); }
+    | FLASH '(' expression ')' block SMOKE block  { 
+        ASTNode* else_node = create_node(NODE_ELSE);
+        else_node->right = $7;
+        $$ = create_if_node($3, $5, else_node);
+    }
     | FLASH '(' expression ')' block SMOKE FLASH '(' expression ')' block rest_if  {
         ASTNode* else_if = create_if_node($9, $11, $12);
-        $$ = create_if_node($3, $5, else_if);
+        ASTNode* else_node = create_node(NODE_ELSE);
+        else_node->right = else_if;
+        $$ = create_if_node($3, $5, else_node);
     }
     ;
 
 rest_if
     : /* empty */                                 { $$ = NULL; }
-    | SMOKE block                                 { $$ = $2; }
+    | SMOKE block                                 { 
+        ASTNode* else_node = create_node(NODE_ELSE);
+        else_node->right = $2;
+        $$ = else_node;
+    }
     | SMOKE FLASH '(' expression ')' block rest_if {
         ASTNode* else_if = create_if_node($4, $6, $7);
-        $$ = else_if;
+        ASTNode* else_node = create_node(NODE_ELSE);
+        else_node->right = else_if;
+        $$ = else_node;
     }
     ;
 
@@ -177,7 +189,12 @@ output_statement
     ;
 
 return_statement
-    : PLANT expression              { $$ = $2; }
+    : PLANT expression              { 
+        ASTNode* node = create_node(NODE_PLANT);
+        node->right = $2;
+        $2->parent = node;
+        $$ = node;
+    }
     ;
 
 assignment

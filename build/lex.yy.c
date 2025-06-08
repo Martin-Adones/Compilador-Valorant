@@ -547,8 +547,33 @@ char *yytext;
 #include "valorant.tab.h"
 
 int line_num = 1;
-#line 551 "build/lex.yy.c"
-#line 552 "build/lex.yy.c"
+
+// Función para procesar caracteres de escape
+char* process_escape_sequences(const char* str) {
+    char* result = malloc(strlen(str) + 1);
+    int i = 0, j = 0;
+    
+    while (str[i] != '\0') {
+        if (str[i] == '\\') {
+            i++;
+            switch (str[i]) {
+                case 'n': result[j++] = '\n'; break;
+                case 't': result[j++] = '\t'; break;
+                case 'r': result[j++] = '\r'; break;
+                case '\\': result[j++] = '\\'; break;
+                case '"': result[j++] = '"'; break;
+                default: result[j++] = str[i]; break;
+            }
+        } else {
+            result[j++] = str[i];
+        }
+        i++;
+    }
+    result[j] = '\0';
+    return result;
+}
+#line 576 "build/lex.yy.c"
+#line 577 "build/lex.yy.c"
 
 #define INITIAL 0
 
@@ -765,10 +790,10 @@ YY_DECL
 		}
 
 	{
-#line 14 "src/valorant.l"
+#line 39 "src/valorant.l"
 
 
-#line 772 "build/lex.yy.c"
+#line 797 "build/lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -837,113 +862,113 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 16 "src/valorant.l"
+#line 41 "src/valorant.l"
 ; /* Ignorar espacios y tabulaciones */
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 17 "src/valorant.l"
+#line 42 "src/valorant.l"
 { line_num++; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 18 "src/valorant.l"
-; /* Ignorar comentarios de una línea */
+#line 43 "src/valorant.l"
+; /* Ignorar comentarios de una linea */
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 20 "src/valorant.l"
-{ return AGENT; }      /* Palabra clave para función */
+#line 45 "src/valorant.l"
+{ return AGENT; }      /* Palabra clave para funcion */
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 21 "src/valorant.l"
+#line 46 "src/valorant.l"
 { return PLANT; }      /* Palabra clave para return */
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 22 "src/valorant.l"
+#line 47 "src/valorant.l"
 { return WIN; }        /* Mayor que */
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 23 "src/valorant.l"
+#line 48 "src/valorant.l"
 { return LOSE; }       /* Menor que */
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 24 "src/valorant.l"
+#line 49 "src/valorant.l"
 { return HEADSHOT; }   /* Igual */
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 25 "src/valorant.l"
-{ return SHARE; }      /* División */
+#line 50 "src/valorant.l"
+{ return SHARE; }      /* Division */
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 26 "src/valorant.l"
+#line 51 "src/valorant.l"
 { return HEAL; }       /* Suma */
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 27 "src/valorant.l"
+#line 52 "src/valorant.l"
 { return DAMAGE; }     /* Resta */
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 28 "src/valorant.l"
-{ return KILL; }       /* Multiplicación */
+#line 53 "src/valorant.l"
+{ return KILL; }       /* Multiplicacion */
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 29 "src/valorant.l"
+#line 54 "src/valorant.l"
 { return DEFUSE; }     /* Break */
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 30 "src/valorant.l"
+#line 55 "src/valorant.l"
 { return ROTATE; }     /* While */
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 31 "src/valorant.l"
+#line 56 "src/valorant.l"
 { return FLASH; }      /* If */
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 32 "src/valorant.l"
+#line 57 "src/valorant.l"
 { return SMOKE; }      /* Else */
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 33 "src/valorant.l"
+#line 58 "src/valorant.l"
 { return SAGE; }       /* Int */
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 34 "src/valorant.l"
+#line 59 "src/valorant.l"
 { return VIPER; }      /* Float */
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 35 "src/valorant.l"
+#line 60 "src/valorant.l"
 { return CYPHER; }     /* String */
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 36 "src/valorant.l"
+#line 61 "src/valorant.l"
 { return BREACH; }     /* Input */
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 37 "src/valorant.l"
+#line 62 "src/valorant.l"
 { return SOVA; }       /* Output */
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 39 "src/valorant.l"
+#line 64 "src/valorant.l"
 { 
     yylval.int_val = atoi(yytext); 
     return INT_LITERAL;
@@ -951,7 +976,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 44 "src/valorant.l"
+#line 69 "src/valorant.l"
 { 
     yylval.float_val = atof(yytext); 
     return FLOAT_LITERAL;
@@ -960,40 +985,18 @@ YY_RULE_SETUP
 case 24:
 /* rule 24 can match eol */
 YY_RULE_SETUP
-#line 49 "src/valorant.l"
+#line 74 "src/valorant.l"
 {
     char* str = strdup(yytext + 1);
     str[strlen(str) - 1] = '\0';
-    
-    // Procesar caracteres de escape
-    char* processed = malloc(strlen(str) + 1);
-    int i = 0, j = 0;
-    
-    while (str[i]) {
-        if (str[i] == '\\' && str[i + 1]) {
-            switch (str[i + 1]) {
-                case 'n': processed[j++] = '\n'; break;
-                case 't': processed[j++] = '\t'; break;
-                case 'r': processed[j++] = '\r'; break;
-                case '\\': processed[j++] = '\\'; break;
-                case '"': processed[j++] = '"'; break;
-                default: processed[j++] = str[i + 1];
-            }
-            i += 2;
-        } else {
-            processed[j++] = str[i++];
-        }
-    }
-    processed[j] = '\0';
-    
+    yylval.string_val = process_escape_sequences(str);
     free(str);
-    yylval.string_val = processed;
     return STRING_LITERAL;
 }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 79 "src/valorant.l"
+#line 82 "src/valorant.l"
 {
     yylval.string_val = strdup(yytext);
     return IDENTIFIER;
@@ -1001,50 +1004,50 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 84 "src/valorant.l"
+#line 87 "src/valorant.l"
 { return '('; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 85 "src/valorant.l"
+#line 88 "src/valorant.l"
 { return ')'; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 86 "src/valorant.l"
+#line 89 "src/valorant.l"
 { return '{'; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 87 "src/valorant.l"
+#line 90 "src/valorant.l"
 { return '}'; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 88 "src/valorant.l"
+#line 91 "src/valorant.l"
 { return ';'; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 89 "src/valorant.l"
+#line 92 "src/valorant.l"
 { return ','; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 90 "src/valorant.l"
+#line 93 "src/valorant.l"
 { return '='; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 92 "src/valorant.l"
-{ printf("Error léxico: caracter no reconocido '%s' en línea %d\n", yytext, line_num); }
+#line 95 "src/valorant.l"
+; /* Ignorar caracteres no reconocidos */
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 94 "src/valorant.l"
+#line 97 "src/valorant.l"
 ECHO;
 	YY_BREAK
-#line 1048 "build/lex.yy.c"
+#line 1051 "build/lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2061,6 +2064,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 94 "src/valorant.l"
+#line 97 "src/valorant.l"
 
 

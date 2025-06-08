@@ -548,8 +548,8 @@ static const yytype_uint8 yyrline[] =
        0,    56,    56,    60,    61,    70,    81,    82,    86,    87,
      100,   101,   107,   108,   109,   110,   111,   112,   119,   120,
      121,   122,   123,   124,   128,   129,   130,   131,   132,   136,
-     137,   138,   139,   140,   141,   142,   143,   147,   148,   149,
-     156,   157,   158,   165,   169,   176,   180
+     137,   138,   139,   140,   141,   142,   143,   147,   148,   153,
+     162,   163,   168,   177,   181,   188,   192
 };
 #endif
 
@@ -1430,69 +1430,86 @@ yyreduce:
 
   case 38: /* if_statement: FLASH '(' expression ')' block SMOKE block  */
 #line 148 "src/valorant.y"
-                                                  { (yyval.ast_node) = create_if_node((yyvsp[-4].ast_node), (yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
-#line 1435 "build/valorant.tab.c"
+                                                  { 
+        ASTNode* else_node = create_node(NODE_ELSE);
+        else_node->right = (yyvsp[0].ast_node);
+        (yyval.ast_node) = create_if_node((yyvsp[-4].ast_node), (yyvsp[-2].ast_node), else_node);
+    }
+#line 1439 "build/valorant.tab.c"
     break;
 
   case 39: /* if_statement: FLASH '(' expression ')' block SMOKE FLASH '(' expression ')' block rest_if  */
-#line 149 "src/valorant.y"
+#line 153 "src/valorant.y"
                                                                                    {
         ASTNode* else_if = create_if_node((yyvsp[-3].ast_node), (yyvsp[-1].ast_node), (yyvsp[0].ast_node));
-        (yyval.ast_node) = create_if_node((yyvsp[-9].ast_node), (yyvsp[-7].ast_node), else_if);
+        ASTNode* else_node = create_node(NODE_ELSE);
+        else_node->right = else_if;
+        (yyval.ast_node) = create_if_node((yyvsp[-9].ast_node), (yyvsp[-7].ast_node), else_node);
     }
-#line 1444 "build/valorant.tab.c"
-    break;
-
-  case 40: /* rest_if: %empty  */
-#line 156 "src/valorant.y"
-                                                  { (yyval.ast_node) = NULL; }
 #line 1450 "build/valorant.tab.c"
     break;
 
-  case 41: /* rest_if: SMOKE block  */
-#line 157 "src/valorant.y"
-                                                  { (yyval.ast_node) = (yyvsp[0].ast_node); }
+  case 40: /* rest_if: %empty  */
+#line 162 "src/valorant.y"
+                                                  { (yyval.ast_node) = NULL; }
 #line 1456 "build/valorant.tab.c"
     break;
 
+  case 41: /* rest_if: SMOKE block  */
+#line 163 "src/valorant.y"
+                                                  { 
+        ASTNode* else_node = create_node(NODE_ELSE);
+        else_node->right = (yyvsp[0].ast_node);
+        (yyval.ast_node) = else_node;
+    }
+#line 1466 "build/valorant.tab.c"
+    break;
+
   case 42: /* rest_if: SMOKE FLASH '(' expression ')' block rest_if  */
-#line 158 "src/valorant.y"
+#line 168 "src/valorant.y"
                                                    {
         ASTNode* else_if = create_if_node((yyvsp[-3].ast_node), (yyvsp[-1].ast_node), (yyvsp[0].ast_node));
-        (yyval.ast_node) = else_if;
+        ASTNode* else_node = create_node(NODE_ELSE);
+        else_node->right = else_if;
+        (yyval.ast_node) = else_node;
     }
-#line 1465 "build/valorant.tab.c"
+#line 1477 "build/valorant.tab.c"
     break;
 
   case 43: /* while_statement: ROTATE '(' expression ')' block  */
-#line 165 "src/valorant.y"
+#line 177 "src/valorant.y"
                                       { (yyval.ast_node) = create_while_node((yyvsp[-2].ast_node), (yyvsp[0].ast_node)); }
-#line 1471 "build/valorant.tab.c"
+#line 1483 "build/valorant.tab.c"
     break;
 
   case 44: /* input_statement: BREACH IDENTIFIER  */
-#line 169 "src/valorant.y"
+#line 181 "src/valorant.y"
                                      { 
         (yyval.ast_node) = create_input_node(create_identifier_node((yyvsp[0].string_val)));
         free((yyvsp[0].string_val));
     }
-#line 1480 "build/valorant.tab.c"
-    break;
-
-  case 45: /* output_statement: SOVA expression  */
-#line 176 "src/valorant.y"
-                                    { (yyval.ast_node) = create_output_node((yyvsp[0].ast_node)); }
-#line 1486 "build/valorant.tab.c"
-    break;
-
-  case 46: /* return_statement: PLANT expression  */
-#line 180 "src/valorant.y"
-                                    { (yyval.ast_node) = (yyvsp[0].ast_node); }
 #line 1492 "build/valorant.tab.c"
     break;
 
+  case 45: /* output_statement: SOVA expression  */
+#line 188 "src/valorant.y"
+                                    { (yyval.ast_node) = create_output_node((yyvsp[0].ast_node)); }
+#line 1498 "build/valorant.tab.c"
+    break;
 
-#line 1496 "build/valorant.tab.c"
+  case 46: /* return_statement: PLANT expression  */
+#line 192 "src/valorant.y"
+                                    { 
+        ASTNode* node = create_node(NODE_PLANT);
+        node->right = (yyvsp[0].ast_node);
+        (yyvsp[0].ast_node)->parent = node;
+        (yyval.ast_node) = node;
+    }
+#line 1509 "build/valorant.tab.c"
+    break;
+
+
+#line 1513 "build/valorant.tab.c"
 
       default: break;
     }
@@ -1685,7 +1702,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 192 "src/valorant.y"
+#line 209 "src/valorant.y"
 
 
 void yyerror(const char* s) {
