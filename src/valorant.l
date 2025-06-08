@@ -61,6 +61,10 @@ char* process_escape_sequences(const char* str) {
 "cypher"        { return CYPHER; }     /* String */
 "breach"        { return BREACH; }     /* Input */
 "sova"          { return SOVA; }       /* Output */
+"eco"           { return NOTEQUAL; }     /* != */
+"save"          { return LESSEQUAL; }    /* <= */
+"fullbuy"       { return GREATEREQUAL; } /* >=*/
+
 
 [0-9]+          { 
     yylval.int_val = atoi(yytext); 

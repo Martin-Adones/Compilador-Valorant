@@ -76,7 +76,10 @@ extern int yydebug;
     INT_LITERAL = 277,             /* INT_LITERAL  */
     FLOAT_LITERAL = 278,           /* FLOAT_LITERAL  */
     STRING_LITERAL = 279,          /* STRING_LITERAL  */
-    IDENTIFIER = 280               /* IDENTIFIER  */
+    IDENTIFIER = 280,              /* IDENTIFIER  */
+    NOTEQUAL = 281,                /* NOTEQUAL  */
+    LESSEQUAL = 282,               /* LESSEQUAL  */
+    GREATEREQUAL = 283             /* GREATEREQUAL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -92,7 +95,7 @@ union YYSTYPE
     char* string_val;
     ASTNode* ast_node;
 
-#line 96 "build/valorant.tab.h"
+#line 99 "build/valorant.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

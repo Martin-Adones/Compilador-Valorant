@@ -34,6 +34,8 @@ ASTNode* root = NULL;
 %token <float_val> FLOAT_LITERAL
 %token <string_val> STRING_LITERAL
 %token <string_val> IDENTIFIER
+%token NOTEQUAL LESSEQUAL GREATEREQUAL
+
 
 /* Tipos de no terminales */
 %type <ast_node> program function_list function
@@ -47,7 +49,7 @@ ASTNode* root = NULL;
 
 /* Precedencia y asociatividad */
 %right '='
-%left WIN LOSE HEADSHOT
+%left WIN LOSE HEADSHOT NOTEQUAL LESSEQUAL GREATEREQUAL
 %left HEAL DAMAGE
 %left KILL SHARE
 
@@ -175,6 +177,10 @@ expression
     | expression LOSE expression      { $$ = create_binary_op_node(OP_LOSE, $1, $3); }
     | expression HEADSHOT expression  { $$ = create_binary_op_node(OP_HEADSHOT, $1, $3); }
     | '(' expression ')'             { $$ = $2; }
+    | expression NOTEQUAL expression       { $$ = create_binary_op_node(OP_NOTEQUAL, $1, $3); }
+    | expression LESSEQUAL expression      { $$ = create_binary_op_node(OP_LESSEQUAL, $1, $3); }
+    | expression GREATEREQUAL expression   { $$ = create_binary_op_node(OP_GREATEREQUAL, $1, $3); }
+
     ;
 
 if_statement

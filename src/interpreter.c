@@ -31,7 +31,6 @@ void set_variable(ExecutionContext* context, const char* name, Value value) {
     Variable* var = context->variables;
     while (var != NULL) {
         if (strcmp(var->name, name) == 0) {
-            // Liberar memoria si es string
             if (var->value.type == TYPE_CYPHER) {
                 free(var->value.value.cypher_val);
             }
@@ -41,7 +40,6 @@ void set_variable(ExecutionContext* context, const char* name, Value value) {
         var = var->next;
     }
     
-    // Si no existe, crear nueva variable
     Variable* new_var = (Variable*)malloc(sizeof(Variable));
     new_var->name = strdup(name);
     new_var->value = value;
@@ -84,7 +82,6 @@ void print_value(Value value) {
             printf("%d", value.value.sage_val);
             break;
         case TYPE_VIPER:
-            // Limitar a 2 decimales
             printf("%.2f", value.value.viper_val);
             break;
         case TYPE_CYPHER:
@@ -93,24 +90,21 @@ void print_value(Value value) {
     }
 }
 
-// Función auxiliar para convertir cualquier valor a string
 char* value_to_string(Value value) {
     char* result;
     switch(value.type) {
         case TYPE_SAGE:
-            result = malloc(32);  // Suficiente para un entero
+            result = malloc(32);
             sprintf(result, "%d", value.value.sage_val);
             break;
         case TYPE_VIPER: {
             float num = value.value.viper_val;
-            // Verificar si el número es exacto (sin decimales)
             if (num == (int)num) {
                 result = malloc(32);
-                sprintf(result, "%.2f", num);  // Mostrar dos decimales para números exactos
+                sprintf(result, "%.2f", num);
             } else {
-                // Para números con decimales, mostrar todos los dígitos significativos
                 result = malloc(32);
-                sprintf(result, "%g", num);  // %g elimina ceros innecesarios
+                sprintf(result, "%g", num);
             }
             break;
         }
@@ -138,7 +132,6 @@ Value interpret_node(void* node, ExecutionContext* context) {
             if (ast_node->data_type == TYPE_INT) {
                 result.type = TYPE_SAGE;
                 result.value.sage_val = ast_node->value.int_value;
-                // Si este número es el resultado de un plant, marcar como terminado normalmente
                 if (ast_node->parent && ast_node->parent->type == NODE_PLANT) {
                     context->error_count = 0;
                     strcpy(context->error_message, "Programa terminado");
@@ -166,42 +159,50 @@ Value interpret_node(void* node, ExecutionContext* context) {
         case NODE_BINARY_OP: {
             Value left = interpret_node(ast_node->left, context);
             Value right = interpret_node(ast_node->right, context);
+            float left_val = (left.type == TYPE_VIPER) ? left.value.viper_val : (float)left.value.sage_val;
+            float right_val = (right.type == TYPE_VIPER) ? right.value.viper_val : (float)right.value.sage_val;
             
-            // Manejar concatenación de strings
-            if (ast_node->value.op == OP_ADD) {  // heal
+            if (ast_node->value.op == OP_ADD) {
                 if (left.type == TYPE_CYPHER || right.type == TYPE_CYPHER) {
                     char* left_str = value_to_string(left);
                     char* right_str = value_to_string(right);
-                    
-                    // Calcular longitud total
                     size_t total_len = strlen(left_str) + strlen(right_str) + 1;
                     char* concat = malloc(total_len);
-                    
-                    // Concatenar strings
                     strcpy(concat, left_str);
                     strcat(concat, right_str);
-                    
-                    // Liberar memoria temporal
                     free(left_str);
                     free(right_str);
                     
-                    // Crear resultado
                     result.type = TYPE_CYPHER;
                     result.value.cypher_val = concat;
                     break;
                 }
             }
             
-            // Si alguno es string, convertir el resultado a TYPE_SAGE
             if (left.type == TYPE_CYPHER || right.type == TYPE_CYPHER) {
                 result.type = TYPE_SAGE;
                 switch(ast_node->value.op) {
-                    case OP_HEADSHOT: // headshot (==)
+                    case OP_HEADSHOT:
                         if (left.type == TYPE_CYPHER && right.type == TYPE_CYPHER) {
                             result.value.sage_val = strcmp(left.value.cypher_val, right.value.cypher_val) == 0;
                         } else {
-                            result.value.sage_val = 0;  // false si los tipos no coinciden
+                            result.value.sage_val = 0;
                         }
+                        break;
+                    case OP_NOTEQUAL:
+                        if (left.type == TYPE_CYPHER && right.type == TYPE_CYPHER) {
+                            result.value.sage_val = strcmp(left.value.cypher_val, right.value.cypher_val) != 0;
+                        } else if (left.type == TYPE_VIPER || right.type == TYPE_VIPER) {
+                            result.value.sage_val = fabs(left_val - right_val) >= 0.000001;
+                        } else {
+                            result.value.sage_val = left.value.sage_val != right.value.sage_val;
+                        }
+                        break;
+                    case OP_LESSEQUAL:
+                        result.value.sage_val = left_val <= right_val;
+                        break;
+                    case OP_GREATEREQUAL:
+                        result.value.sage_val = left_val >= right_val;
                         break;
                     default:
                         report_error(context, "Operación no soportada con strings");
@@ -210,35 +211,31 @@ Value interpret_node(void* node, ExecutionContext* context) {
                 break;
             }
             
-            // Si alguno es decimal, convertir el resultado a TYPE_VIPER
             result.type = (left.type == TYPE_VIPER || right.type == TYPE_VIPER) ? TYPE_VIPER : TYPE_SAGE;
             
-            float left_val = (left.type == TYPE_VIPER) ? left.value.viper_val : (float)left.value.sage_val;
-            float right_val = (right.type == TYPE_VIPER) ? right.value.viper_val : (float)right.value.sage_val;
-            
             switch(ast_node->value.op) {
-                case OP_ADD: // heal
+                case OP_ADD:
                     if (result.type == TYPE_VIPER) {
                         result.value.viper_val = left_val + right_val;
                     } else {
                         result.value.sage_val = left.value.sage_val + right.value.sage_val;
                     }
                     break;
-                case OP_SUB: // damage
+                case OP_SUB:
                     if (result.type == TYPE_VIPER) {
                         result.value.viper_val = left_val - right_val;
                     } else {
                         result.value.sage_val = left.value.sage_val - right.value.sage_val;
                     }
                     break;
-                case OP_MUL: // kill
+                case OP_MUL:
                     if (result.type == TYPE_VIPER) {
                         result.value.viper_val = left_val * right_val;
                     } else {
                         result.value.sage_val = left.value.sage_val * right.value.sage_val;
                     }
                     break;
-                case OP_DIV: // share
+                case OP_DIV:
                     if ((result.type == TYPE_VIPER && right_val == 0.0) ||
                         (result.type == TYPE_SAGE && right.value.sage_val == 0)) {
                         report_error(context, "Error: División por cero");
@@ -250,15 +247,15 @@ Value interpret_node(void* node, ExecutionContext* context) {
                         result.value.sage_val = left.value.sage_val / right.value.sage_val;
                     }
                     break;
-                case OP_WIN: // win (>)
+                case OP_WIN:
                     result.type = TYPE_SAGE;
                     result.value.sage_val = left_val > right_val;
                     break;
-                case OP_LOSE: // lose (<)
+                case OP_LOSE:
                     result.type = TYPE_SAGE;
                     result.value.sage_val = left_val < right_val;
                     break;
-                case OP_HEADSHOT: // headshot (==)
+                case OP_HEADSHOT:
                     result.type = TYPE_SAGE;
                     if (left.type == TYPE_VIPER || right.type == TYPE_VIPER) {
                         result.value.sage_val = fabs(left_val - right_val) < 0.000001;
@@ -266,16 +263,29 @@ Value interpret_node(void* node, ExecutionContext* context) {
                         result.value.sage_val = left.value.sage_val == right.value.sage_val;
                     }
                     break;
+                case OP_NOTEQUAL:
+                    result.type = TYPE_SAGE;
+                    result.value.sage_val = left_val != right_val;
+                    break;
+                case OP_LESSEQUAL:
+                    result.type = TYPE_SAGE;
+                    result.value.sage_val = left_val <= right_val;
+                    break;
+                case OP_GREATEREQUAL:
+                    result.type = TYPE_SAGE;
+                    result.value.sage_val = left_val >= right_val;
+                    break;
+                case OP_SHARE:
+                    report_error(context, "Operación share no implementada");
+                    break;
             }
             break;
         }
         case NODE_IF: {
             Value condition = interpret_node(ast_node->left, context);
             if (condition.type == TYPE_SAGE && condition.value.sage_val) {
-                // Si la condición es verdadera, ejecutar el bloque if
                 result = interpret_node(ast_node->right, context);
             } else if (ast_node->right && ast_node->right->next) {
-                // Si hay un else o un else-if, evaluar la cadena
                 ASTNode* next_node = ast_node->right->next;
                 result = interpret_node(next_node, context);
             }
@@ -291,17 +301,16 @@ Value interpret_node(void* node, ExecutionContext* context) {
                     ASTNode* block_stmt = current->left;
                     while (block_stmt) {
                         if (block_stmt->type == NODE_DEFUSE) {
-                            return result;  // Salir inmediatamente del bucle
+                            return result;
                         }
                         result = interpret_node(block_stmt, context);
                         if (block_stmt->type == NODE_IF) {
-                            // Si es un if, verificar si tiene un defuse en su bloque
                             ASTNode* if_block = block_stmt->right;
                             if (if_block && if_block->type == NODE_BLOCK) {
                                 ASTNode* if_stmt = if_block->left;
                                 while (if_stmt) {
                                     if (if_stmt->type == NODE_DEFUSE) {
-                                        return result;  // Salir inmediatamente del bucle
+                                        return result;
                                     }
                                     if_stmt = if_stmt->next;
                                 }
@@ -311,7 +320,7 @@ Value interpret_node(void* node, ExecutionContext* context) {
                     }
                 } else {
                     if (current->type == NODE_DEFUSE) {
-                        return result;  // Salir inmediatamente del bucle
+                        return result;
                     }
                     result = interpret_node(current, context);
                 }
@@ -348,7 +357,6 @@ Value interpret_node(void* node, ExecutionContext* context) {
             break;
         }
         case NODE_INPUT: {
-            Value input_value;
             char buffer[256];
             ASTNode* id_node = ast_node->left;
             Variable* var = find_variable(context, id_node->value.string_value);
@@ -363,7 +371,7 @@ Value interpret_node(void* node, ExecutionContext* context) {
                 break;
             }
             
-            buffer[strcspn(buffer, "\n")] = 0;  // Eliminar el salto de línea
+            buffer[strcspn(buffer, "\n")] = 0;
             
             switch(var->value.type) {
                 case TYPE_SAGE:
@@ -383,36 +391,31 @@ Value interpret_node(void* node, ExecutionContext* context) {
             break;
         }
         case NODE_DEFUSE:
-            return result;  // Simplemente retornar el último resultado
+            return result;
         case NODE_FOR: {
-            // Ejecutar la inicialización
             if (ast_node->init) {
                 interpret_node(ast_node->init, context);
             }
             
-            // Bucle principal
             while (1) {
-                // Evaluar la condición
                 Value condition = interpret_node(ast_node->left, context);
                 if (!condition.value.sage_val) break;
                 
-                // Ejecutar el cuerpo del bucle
                 ASTNode* current = ast_node->right;
                 if (current->type == NODE_BLOCK) {
                     ASTNode* block_stmt = current->left;
                     while (block_stmt) {
                         if (block_stmt->type == NODE_DEFUSE) {
-                            return result;  // Salir inmediatamente del bucle
+                            return result;
                         }
                         result = interpret_node(block_stmt, context);
                         if (block_stmt->type == NODE_IF) {
-                            // Si es un if, verificar si tiene un defuse en su bloque
                             ASTNode* if_block = block_stmt->right;
                             if (if_block && if_block->type == NODE_BLOCK) {
                                 ASTNode* if_stmt = if_block->left;
                                 while (if_stmt) {
                                     if (if_stmt->type == NODE_DEFUSE) {
-                                        return result;  // Salir inmediatamente del bucle
+                                        return result;
                                     }
                                     if_stmt = if_stmt->next;
                                 }
@@ -422,18 +425,21 @@ Value interpret_node(void* node, ExecutionContext* context) {
                     }
                 } else {
                     if (current->type == NODE_DEFUSE) {
-                        return result;  // Salir inmediatamente del bucle
+                        return result;
                     }
                     result = interpret_node(current, context);
                 }
                 
-                // Ejecutar el incremento
                 if (ast_node->increment) {
                     interpret_node(ast_node->increment, context);
                 }
             }
             break;
         }
+        case NODE_ELSE:
+        case NODE_PLANT:
+            // Implementación pendiente
+            break;
     }
     
     return result;
@@ -443,10 +449,9 @@ void interpret_program(ASTNode* program) {
     ExecutionContext* context = create_context();
     Value result = interpret_node(program, context);
     
-    // Solo mostrar error si hay errores reales (no relacionados con plant)
     if (context->error_count > 0 && strcmp(context->error_message, "Programa terminado") != 0) {
         printf("\nPrograma terminado con errores\n");
     }
     
     free_context(context);
-} 
+}

@@ -34,14 +34,17 @@ typedef enum {
 
 // Operadores binarios
 typedef enum {
-    OP_ADD,      // +
-    OP_SUB,      // -
-    OP_MUL,      // *
-    OP_DIV,      // /
-    OP_WIN,      // win (mayor que)
-    OP_LOSE,     // lose (menor que)
-    OP_HEADSHOT, // headshot (igual)
-    OP_SHARE     // share (asignación)
+    OP_ADD,           // +
+    OP_SUB,           // -
+    OP_MUL,           // *
+    OP_DIV,           // /
+    OP_WIN,           // win (mayor que)
+    OP_LOSE,          // lose (menor que)
+    OP_HEADSHOT,      // headshot (igual)
+    OP_NOTEQUAL,      // eco (diferente)
+    OP_LESSEQUAL,     // save (<=)
+    OP_GREATEREQUAL,  // fullbuy (>=)
+    OP_SHARE          // share (asignación)
 } BinaryOp;
 
 typedef union {
