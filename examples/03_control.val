@@ -3,27 +3,28 @@ agent spike() {
     sage contador = 1;
     sage limite = 5;
     
-    sova "=== Prueba de ROTATE (while) ===";
+    sova "=== Prueba de ROTATE (while) ===\n";
     rotate (contador lose limite) {
         sova "Iteración: ";
         sova contador;
         contador = contador heal 1;
+        sova "\n";
     }
     
-    sova "\n=== Prueba de FLASH/SMOKE (if/else) ===";
+    sova "\n=== Prueba de FLASH/SMOKE (if/else) ===\n";
     sage puntuacion = 85;
     
     flash (puntuacion win 90) {
-        sova "Excelente puntuación!";
+        sova "\nExcelente puntuación!";
     } smoke flash (puntuacion win 80) {
-        sova "Muy buena puntuación!";
+        sova "\nMuy buena puntuación!";
     } smoke flash (puntuacion win 70) {
-        sova "Buena puntuación!";
+        sova "\nBuena puntuación!";
     } smoke {
-        sova "Necesitas mejorar";
+        sova "\nNecesitas mejorar";
     }
     
-    sova "\n=== Prueba de DEFUSE (break) ===";
+    sova "\n=== Prueba de DEFUSE (break) ===\n";
     sage i = 1;
     rotate (i lose 10) {
         flash (i headshot 5) {

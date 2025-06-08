@@ -5,34 +5,34 @@ agent spike() {
     cypher apellido = "Valorant";
     cypher nombre_completo = nombre heal apellido;
     
-    sova "=== Prueba de Concatenación Básica ===";
+    sova "=== Prueba de Concatenación Básica ===\n";
     sova nombre_completo;
     
     // Prueba de concatenación con números
     sage nivel = 42;
-    cypher info = "Nivel" heal nivel;
+    cypher info = "Nivel " heal nivel;
     
-    sova "\n=== Prueba de Concatenación con Números ===";
+    sova "\n=== Prueba de Concatenación con Números ===\n";
     sova info;
     
     // Prueba de concatenación con decimales
     viper precision = 98.5;
-    cypher stats = "Precisión" heal precision;
+    cypher stats = "Precisión " heal precision;
     
-    sova "\n=== Prueba de Concatenación con Decimales ===";
+    sova "\n=== Prueba de Concatenación con Decimales ===\n";
     sova stats;
     
     // Prueba de concatenación múltiple
-    cypher mensaje = "Agente" heal nivel heal "con precisión" heal precision;
+    cypher mensaje = "Agente " heal nivel heal " con precisión " heal precision;
     
-    sova "\n=== Prueba de Concatenación Múltiple ===";
+    sova "\n=== Prueba de Concatenación Múltiple ===\n";
     sova mensaje;
     
     // Prueba de concatenación con entrada
     cypher nuevo_agente;
     sage nuevo_nivel;
     
-    sova "\n=== Prueba de Concatenación con Entrada ===";
+    sova "\n=== Prueba de Concatenación con Entrada ===\n";
     sova "Ingresa el nombre del agente: ";
     breach nuevo_agente;
     

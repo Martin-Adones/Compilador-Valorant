@@ -1,6 +1,6 @@
-#line 1 "build/lex.yy.c"
+#line 2 "build/lex.yy.c"
 
-#line 3 "build/lex.yy.c"
+#line 4 "build/lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -547,8 +547,8 @@ char *yytext;
 #include "valorant.tab.h"
 
 int line_num = 1;
-#line 550 "build/lex.yy.c"
 #line 551 "build/lex.yy.c"
+#line 552 "build/lex.yy.c"
 
 #define INITIAL 0
 
@@ -768,7 +768,7 @@ YY_DECL
 #line 14 "src/valorant.l"
 
 
-#line 771 "build/lex.yy.c"
+#line 772 "build/lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1044,7 +1044,7 @@ YY_RULE_SETUP
 #line 94 "src/valorant.l"
 ECHO;
 	YY_BREAK
-#line 1047 "build/lex.yy.c"
+#line 1048 "build/lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
