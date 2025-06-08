@@ -53,6 +53,7 @@ char* process_escape_sequences(const char* str) {
 "kill"          { return KILL; }       /* Multiplicacion */
 "defuse"        { return DEFUSE; }     /* Break */
 "rotate"        { return ROTATE; }     /* While */
+"rush"          { return RUSH; }       /* For */
 "flash"         { return FLASH; }      /* If */
 "smoke"         { return SMOKE; }      /* Else */
 "sage"          { return SAGE; }       /* Int */

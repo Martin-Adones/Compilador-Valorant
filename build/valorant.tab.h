@@ -67,15 +67,16 @@ extern int yydebug;
     ROTATE = 268,                  /* ROTATE  */
     FLASH = 269,                   /* FLASH  */
     SMOKE = 270,                   /* SMOKE  */
-    SAGE = 271,                    /* SAGE  */
-    VIPER = 272,                   /* VIPER  */
-    CYPHER = 273,                  /* CYPHER  */
-    BREACH = 274,                  /* BREACH  */
-    SOVA = 275,                    /* SOVA  */
-    INT_LITERAL = 276,             /* INT_LITERAL  */
-    FLOAT_LITERAL = 277,           /* FLOAT_LITERAL  */
-    STRING_LITERAL = 278,          /* STRING_LITERAL  */
-    IDENTIFIER = 279               /* IDENTIFIER  */
+    RUSH = 271,                    /* RUSH  */
+    SAGE = 272,                    /* SAGE  */
+    VIPER = 273,                   /* VIPER  */
+    CYPHER = 274,                  /* CYPHER  */
+    BREACH = 275,                  /* BREACH  */
+    SOVA = 276,                    /* SOVA  */
+    INT_LITERAL = 277,             /* INT_LITERAL  */
+    FLOAT_LITERAL = 278,           /* FLOAT_LITERAL  */
+    STRING_LITERAL = 279,          /* STRING_LITERAL  */
+    IDENTIFIER = 280               /* IDENTIFIER  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -91,7 +92,7 @@ union YYSTYPE
     char* string_val;
     ASTNode* ast_node;
 
-#line 95 "build/valorant.tab.h"
+#line 96 "build/valorant.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

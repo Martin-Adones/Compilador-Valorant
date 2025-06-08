@@ -26,7 +26,7 @@ ASTNode* root = NULL;
 %token AGENT PLANT
 %token WIN LOSE HEADSHOT SHARE
 %token HEAL DAMAGE KILL
-%token DEFUSE ROTATE FLASH SMOKE
+%token DEFUSE ROTATE FLASH SMOKE RUSH
 %token SAGE VIPER CYPHER
 %token BREACH SOVA
 
@@ -39,10 +39,11 @@ ASTNode* root = NULL;
 %type <ast_node> program function_list function
 %type <ast_node> statement_list statement
 %type <ast_node> expression declaration
-%type <ast_node> if_statement while_statement
+%type <ast_node> if_statement while_statement for_statement
 %type <ast_node> input_statement output_statement
 %type <ast_node> block return_statement
-%type <ast_node> assignment rest_if
+%type <ast_node> assignment else_if_chain
+%type <ast_node> for_init for_condition for_increment
 
 /* Precedencia y asociatividad */
 %right '='
@@ -69,7 +70,7 @@ function_list
 function
     : AGENT IDENTIFIER '(' ')' block  { 
         if (strcmp($2, "spike") == 0) {
-            $$ = $5; // Para la función spike, solo retornamos el bloque
+            $$ = $5;
         } else {
             $$ = create_declaration_node(TYPE_VOID, $2, $5);
         }
@@ -106,11 +107,44 @@ statement
     }
     | if_statement                    { $$ = $1; }
     | while_statement                 { $$ = $1; }
+    | for_statement                   { $$ = $1; }
     | input_statement ';'             { $$ = $1; }
     | output_statement ';'            { $$ = $1; }
     | return_statement ';'            { $$ = $1; }
     | DEFUSE ';'                      { 
         ASTNode* node = create_node(NODE_DEFUSE);
+        $$ = node;
+    }
+    ;
+
+for_init
+    : declaration                     { $$ = $1; }
+    | assignment                      { $$ = $1; }
+    ;
+
+for_condition
+    : expression                      { $$ = $1; }
+    ;
+
+for_increment
+    : assignment                      { $$ = $1; }
+    | IDENTIFIER '=' expression       {
+        ASTNode* node = create_node(NODE_ASSIGNMENT);
+        node->left = create_identifier_node($1);
+        node->right = $3;
+        $$ = node;
+        free($1);
+    }
+    ;
+
+for_statement
+    : RUSH '(' for_init ';' for_condition ';' for_increment ')' block {
+        // Creamos un nodo especial para el bucle for
+        ASTNode* node = create_node(NODE_FOR);
+        node->init = $3;      // Inicialización
+        node->left = $5;      // Condición
+        node->increment = $7; // Incremento
+        node->right = $9;     // Cuerpo del bucle
         $$ = node;
     }
     ;
@@ -144,33 +178,20 @@ expression
     ;
 
 if_statement
-    : FLASH '(' expression ')' block              { $$ = create_if_node($3, $5, NULL); }
-    | FLASH '(' expression ')' block SMOKE block  { 
-        ASTNode* else_node = create_node(NODE_ELSE);
-        else_node->right = $7;
-        $$ = create_if_node($3, $5, else_node);
+    : FLASH '(' expression ')' block                  { 
+        $$ = create_if_node($3, $5, NULL); 
     }
-    | FLASH '(' expression ')' block SMOKE FLASH '(' expression ')' block rest_if  {
-        ASTNode* else_if = create_if_node($9, $11, $12);
-        ASTNode* else_node = create_node(NODE_ELSE);
-        else_node->right = else_if;
-        $$ = create_if_node($3, $5, else_node);
+    | FLASH '(' expression ')' block SMOKE block      { 
+        $5->next = $7;  // Conectar el bloque if con el bloque else
+        $$ = create_if_node($3, $5, NULL);
     }
     ;
 
-rest_if
-    : /* empty */                                 { $$ = NULL; }
-    | SMOKE block                                 { 
-        ASTNode* else_node = create_node(NODE_ELSE);
-        else_node->right = $2;
-        $$ = else_node;
-    }
-    | SMOKE FLASH '(' expression ')' block rest_if {
-        ASTNode* else_if = create_if_node($4, $6, $7);
-        ASTNode* else_node = create_node(NODE_ELSE);
-        else_node->right = else_if;
-        $$ = else_node;
-    }
+else_if_chain
+    : SMOKE block                                     { $$ = $2; }
+    | SMOKE FLASH '(' expression ')' block            { $$ = create_if_node($4, $6, NULL); }
+    | SMOKE FLASH '(' expression ')' block SMOKE block { $$ = create_if_node($4, $6, $8); }
+    | SMOKE FLASH '(' expression ')' block else_if_chain { $$ = create_if_node($4, $6, $7); }
     ;
 
 while_statement

@@ -11,6 +11,9 @@ ASTNode* create_node(NodeType type) {
     node->left = NULL;
     node->right = NULL;
     node->next = NULL;
+    node->parent = NULL;
+    node->init = NULL;
+    node->increment = NULL;
     return node;
 }
 
@@ -46,6 +49,8 @@ ASTNode* create_binary_op_node(BinaryOp op, ASTNode* left, ASTNode* right) {
     node->value.op = op;
     node->left = left;
     node->right = right;
+    if (left) left->parent = node;
+    if (right) right->parent = node;
     return node;
 }
 
@@ -53,6 +58,8 @@ ASTNode* create_assignment_node(ASTNode* left, ASTNode* right) {
     ASTNode* node = create_node(NODE_ASSIGNMENT);
     node->left = left;
     node->right = right;
+    if (left) left->parent = node;
+    if (right) right->parent = node;
     return node;
 }
 
@@ -60,7 +67,12 @@ ASTNode* create_if_node(ASTNode* condition, ASTNode* then_block, ASTNode* else_b
     ASTNode* node = create_node(NODE_IF);
     node->left = condition;
     node->right = then_block;
-    node->next = else_block;
+    if (else_block) {
+        then_block->next = else_block;
+    }
+    if (condition) condition->parent = node;
+    if (then_block) then_block->parent = node;
+    if (else_block) else_block->parent = node;
     return node;
 }
 
@@ -68,12 +80,28 @@ ASTNode* create_while_node(ASTNode* condition, ASTNode* body) {
     ASTNode* node = create_node(NODE_WHILE);
     node->left = condition;
     node->right = body;
+    if (condition) condition->parent = node;
+    if (body) body->parent = node;
+    return node;
+}
+
+ASTNode* create_for_node(ASTNode* init, ASTNode* condition, ASTNode* increment, ASTNode* body) {
+    ASTNode* node = create_node(NODE_FOR);
+    node->init = init;
+    node->left = condition;
+    node->increment = increment;
+    node->right = body;
+    if (init) init->parent = node;
+    if (condition) condition->parent = node;
+    if (increment) increment->parent = node;
+    if (body) body->parent = node;
     return node;
 }
 
 ASTNode* create_block_node(ASTNode* statements) {
     ASTNode* node = create_node(NODE_BLOCK);
     node->left = statements;
+    if (statements) statements->parent = node;
     return node;
 }
 
@@ -101,18 +129,23 @@ ASTNode* create_declaration_node(DataType type, const char* name, ASTNode* initi
         }
     }
     
+    if (node->left) node->left->parent = node;
+    if (node->right) node->right->parent = node;
+    
     return node;
 }
 
 ASTNode* create_input_node(ASTNode* variable) {
     ASTNode* node = create_node(NODE_INPUT);
     node->left = variable;
+    if (variable) variable->parent = node;
     return node;
 }
 
 ASTNode* create_output_node(ASTNode* expression) {
     ASTNode* node = create_node(NODE_OUTPUT);
     node->left = expression;
+    if (expression) expression->parent = node;
     return node;
 }
 
@@ -122,6 +155,8 @@ void free_ast(ASTNode* node) {
     free_ast(node->left);
     free_ast(node->right);
     free_ast(node->next);
+    free_ast(node->init);
+    free_ast(node->increment);
     
     if (node->type == NODE_STRING || node->type == NODE_IDENTIFIER || 
         node->type == NODE_DECLARATION) {

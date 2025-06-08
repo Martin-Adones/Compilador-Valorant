@@ -274,9 +274,10 @@ Value interpret_node(void* node, ExecutionContext* context) {
             if (condition.type == TYPE_SAGE && condition.value.sage_val) {
                 // Si la condición es verdadera, ejecutar el bloque if
                 result = interpret_node(ast_node->right, context);
-            } else if (ast_node->next && ast_node->next->type == NODE_ELSE) {
-                // Si hay un else (smoke), ejecutar su bloque
-                result = interpret_node(ast_node->next->right, context);
+            } else if (ast_node->right && ast_node->right->next) {
+                // Si hay un else o un else-if, evaluar la cadena
+                ASTNode* next_node = ast_node->right->next;
+                result = interpret_node(next_node, context);
             }
             break;
         }
@@ -383,6 +384,56 @@ Value interpret_node(void* node, ExecutionContext* context) {
         }
         case NODE_DEFUSE:
             return result;  // Simplemente retornar el último resultado
+        case NODE_FOR: {
+            // Ejecutar la inicialización
+            if (ast_node->init) {
+                interpret_node(ast_node->init, context);
+            }
+            
+            // Bucle principal
+            while (1) {
+                // Evaluar la condición
+                Value condition = interpret_node(ast_node->left, context);
+                if (!condition.value.sage_val) break;
+                
+                // Ejecutar el cuerpo del bucle
+                ASTNode* current = ast_node->right;
+                if (current->type == NODE_BLOCK) {
+                    ASTNode* block_stmt = current->left;
+                    while (block_stmt) {
+                        if (block_stmt->type == NODE_DEFUSE) {
+                            return result;  // Salir inmediatamente del bucle
+                        }
+                        result = interpret_node(block_stmt, context);
+                        if (block_stmt->type == NODE_IF) {
+                            // Si es un if, verificar si tiene un defuse en su bloque
+                            ASTNode* if_block = block_stmt->right;
+                            if (if_block && if_block->type == NODE_BLOCK) {
+                                ASTNode* if_stmt = if_block->left;
+                                while (if_stmt) {
+                                    if (if_stmt->type == NODE_DEFUSE) {
+                                        return result;  // Salir inmediatamente del bucle
+                                    }
+                                    if_stmt = if_stmt->next;
+                                }
+                            }
+                        }
+                        block_stmt = block_stmt->next;
+                    }
+                } else {
+                    if (current->type == NODE_DEFUSE) {
+                        return result;  // Salir inmediatamente del bucle
+                    }
+                    result = interpret_node(current, context);
+                }
+                
+                // Ejecutar el incremento
+                if (ast_node->increment) {
+                    interpret_node(ast_node->increment, context);
+                }
+            }
+            break;
+        }
     }
     
     return result;

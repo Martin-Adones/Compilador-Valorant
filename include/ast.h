@@ -20,7 +20,8 @@ typedef enum {
     NODE_INPUT,       // Entrada (scanf)
     NODE_OUTPUT,      // Salida (printf)
     NODE_DEFUSE,      // Break
-    NODE_PLANT        // Return
+    NODE_PLANT,       // Return
+    NODE_FOR          // For loop
 } NodeType;
 
 // Tipos de datos
@@ -61,6 +62,8 @@ typedef struct ASTNode {
     struct ASTNode* right;
     struct ASTNode* next;  // Para listas de instrucciones
     struct ASTNode* parent; // Referencia al nodo padre
+    struct ASTNode* init;  // For loop initialization
+    struct ASTNode* increment; // For loop increment
 } ASTNode;
 
 // Funciones de creación de nodos
@@ -77,6 +80,7 @@ ASTNode* create_block_node(ASTNode* statements);
 ASTNode* create_declaration_node(DataType type, const char* name, ASTNode* initial_value);
 ASTNode* create_input_node(ASTNode* variable);
 ASTNode* create_output_node(ASTNode* expression);
+ASTNode* create_for_node(ASTNode* init, ASTNode* condition, ASTNode* increment, ASTNode* body);
 
 // Funciones de manejo del AST
 void free_ast(ASTNode* node);
