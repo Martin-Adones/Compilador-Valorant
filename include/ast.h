@@ -21,7 +21,10 @@ typedef enum {
     NODE_OUTPUT,      // Salida (printf)
     NODE_DEFUSE,      // Break
     NODE_PLANT,       // Return
-    NODE_FOR          // For loop
+    NODE_FOR,         // For loop
+    NODE_CLASS,       // Clase
+    NODE_METHOD,      // Método
+    NODE_FUNCTION_CALL // Llamada a función
 } NodeType;
 
 // Tipos de datos
@@ -84,6 +87,10 @@ ASTNode* create_declaration_node(DataType type, const char* name, ASTNode* initi
 ASTNode* create_input_node(ASTNode* variable);
 ASTNode* create_output_node(ASTNode* expression);
 ASTNode* create_for_node(ASTNode* init, ASTNode* condition, ASTNode* increment, ASTNode* body);
+ASTNode* create_class_node(const char* name, ASTNode* methods);
+ASTNode* create_method_node(const char* name, ASTNode* body);
+ASTNode* create_function_call_node(const char* name);
+ASTNode* create_return_node(ASTNode* expression);
 
 // Funciones de manejo del AST
 void free_ast(ASTNode* node);

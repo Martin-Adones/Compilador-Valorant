@@ -38,14 +38,14 @@ ASTNode* root = NULL;
 
 
 /* Tipos de no terminales */
-%type <ast_node> program function_list function
+%type <ast_node> program class_definition method_list method
 %type <ast_node> statement_list statement
 %type <ast_node> expression declaration
 %type <ast_node> if_statement while_statement for_statement
 %type <ast_node> input_statement output_statement
-%type <ast_node> block return_statement
-%type <ast_node> assignment else_if_chain
-%type <ast_node> for_init for_condition for_increment
+%type <ast_node> block return_statement assignment
+%type <ast_node> function_call for_init for_condition for_increment
+%type <ast_node> else_if_chain
 
 /* Precedencia y asociatividad */
 %right '='
@@ -56,12 +56,19 @@ ASTNode* root = NULL;
 %%
 
 program
-    : function_list                    { root = $1; }
+    : class_definition                { root = $1; }
     ;
 
-function_list
-    : function                        { $$ = $1; }
-    | function_list function          { 
+class_definition
+    : AGENT IDENTIFIER '{' method_list '}'  { 
+        $$ = create_class_node($2, $4);
+        free($2);
+    }
+    ;
+
+method_list
+    : method                         { $$ = $1; }
+    | method_list method            {
         ASTNode* temp = $1;
         while (temp->next) temp = temp->next;
         temp->next = $2;
@@ -69,25 +76,21 @@ function_list
     }
     ;
 
-function
-    : AGENT IDENTIFIER '(' ')' block  { 
-        if (strcmp($2, "spike") == 0) {
-            $$ = $5;
-        } else {
-            $$ = create_declaration_node(TYPE_VOID, $2, $5);
-        }
+method
+    : SAGE IDENTIFIER '(' ')' block  { 
+        $$ = create_method_node($2, $5);
         free($2);
     }
     ;
 
 block
-    : '{' statement_list '}'          { $$ = create_block_node($2); }
-    | '{' '}'                         { $$ = create_block_node(NULL); }
+    : '{' statement_list '}'         { $$ = create_block_node($2); }
+    | '{' '}'                        { $$ = create_block_node(NULL); }
     ;
 
 statement_list
-    : statement                       { $$ = $1; }
-    | statement_list statement        {
+    : statement                      { $$ = $1; }
+    | statement_list statement       {
         if ($1 == NULL) {
             $$ = $2;
         } else {
@@ -100,22 +103,17 @@ statement_list
     ;
 
 statement
-    : declaration ';'                 { $$ = $1; }
-    | IDENTIFIER '=' expression ';'   {
-        ASTNode* node = create_node(NODE_ASSIGNMENT);
-        node->left = create_identifier_node($1);
-        node->right = $3;
-        $$ = node;
-    }
-    | if_statement                    { $$ = $1; }
-    | while_statement                 { $$ = $1; }
-    | for_statement                   { $$ = $1; }
-    | input_statement ';'             { $$ = $1; }
-    | output_statement ';'            { $$ = $1; }
-    | return_statement ';'            { $$ = $1; }
-    | DEFUSE ';'                      { 
-        ASTNode* node = create_node(NODE_DEFUSE);
-        $$ = node;
+    : declaration ';'                { $$ = $1; }
+    | assignment ';'                 { $$ = $1; }
+    | if_statement                   { $$ = $1; }
+    | while_statement               { $$ = $1; }
+    | for_statement                 { $$ = $1; }
+    | input_statement ';'           { $$ = $1; }
+    | output_statement ';'          { $$ = $1; }
+    | return_statement ';'          { $$ = $1; }
+    | function_call ';'             { $$ = $1; }
+    | DEFUSE ';'                    { 
+        $$ = create_node(NODE_DEFUSE);
     }
     ;
 
@@ -165,10 +163,7 @@ expression
     | FLOAT_LITERAL                   { $$ = create_float_node($1); }
     | STRING_LITERAL                  { $$ = create_string_node($1); free($1); }
     | IDENTIFIER                      { $$ = create_identifier_node($1); free($1); }
-    | IDENTIFIER '=' expression       { 
-        $$ = create_assignment_node(create_identifier_node($1), $3);
-        free($1);
-    }
+    | function_call                   { $$ = $1; }
     | expression HEAL expression      { $$ = create_binary_op_node(OP_ADD, $1, $3); }
     | expression DAMAGE expression    { $$ = create_binary_op_node(OP_SUB, $1, $3); }
     | expression KILL expression      { $$ = create_binary_op_node(OP_MUL, $1, $3); }
@@ -180,16 +175,14 @@ expression
     | expression NOTEQUAL expression       { $$ = create_binary_op_node(OP_NOTEQUAL, $1, $3); }
     | expression LESSEQUAL expression      { $$ = create_binary_op_node(OP_LESSEQUAL, $1, $3); }
     | expression GREATEREQUAL expression   { $$ = create_binary_op_node(OP_GREATEREQUAL, $1, $3); }
-
     ;
 
 if_statement
     : FLASH '(' expression ')' block                  { 
         $$ = create_if_node($3, $5, NULL); 
     }
-    | FLASH '(' expression ')' block SMOKE block      { 
-        $5->next = $7;  // Conectar el bloque if con el bloque else
-        $$ = create_if_node($3, $5, NULL);
+    | FLASH '(' expression ')' block else_if_chain    { 
+        $$ = create_if_node($3, $5, $6);
     }
     ;
 
@@ -216,20 +209,24 @@ output_statement
     ;
 
 return_statement
-    : PLANT expression              { 
-        ASTNode* node = create_node(NODE_PLANT);
-        node->right = $2;
-        $2->parent = node;
-        $$ = node;
-    }
+    : PLANT expression               { $$ = create_return_node($2); }
+    | PLANT                         { $$ = create_return_node(NULL); }
     ;
 
 assignment
-    : IDENTIFIER '=' expression {
+    : IDENTIFIER '=' expression      {
         ASTNode* node = create_node(NODE_ASSIGNMENT);
         node->left = create_identifier_node($1);
         node->right = $3;
         $$ = node;
+        free($1);
+    }
+    ;
+
+function_call
+    : IDENTIFIER '(' ')'             {
+        $$ = create_function_call_node($1);
+        free($1);
     }
     ;
 

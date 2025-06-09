@@ -1,14 +1,16 @@
-agent main () {
-    sage i = 0;
-    rush ( i = 0; i lose 3; i = i heal 1) {
-        sova ( " Iteracion numero : ") ;
-        sova i;
-        sova "\n";
-    }
+agent CicloFor {
+    sage CicloFor() {  // Constructor (main)
+        sage i = 0;
+        rush (i = 0; i lose 3; i = i heal 1) {
+            sova "Iteracion numero: ";
+            sova i;
+            sova "\n";
+        }
 
-    viper health = 50.0;
-    flash ( health save 50.0) {
-        sova ( " Salud baja . Busca curacion ! " ) ;
+        viper health = 50.0;
+        flash (health save 50.0) {
+            sova "Salud baja. Busca curacion!";
+        }
+        plant 0;
     }
-    plant 0;
 }

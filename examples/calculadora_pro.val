@@ -1,100 +1,102 @@
 // Calculadora Avanzada Valorant
-agent spike() {
-    // Variables para los números y resultados
-    viper num1;
-    viper num2;
-    viper resultado;
-    sage opcion;
-    cypher continuar = "si";
+agent CalculadoraPro {
+    sage CalculadoraPro() {  // Constructor (main)
+        // Variables para los números y resultados
+        viper num1;
+        viper num2;
+        viper resultado;
+        sage opcion;
+        cypher continuar = "si";
 
-    // Bucle principal del programa
-    rotate (continuar headshot "si") {
-        // Menú de opciones
-        sova "\n=== Calculadora Avanzada Valorant ===\n";
-        sova "1. Suma (heal)\n";
-        sova "2. Resta (damage)\n";
-        sova "3. Multiplicacion (kill)\n";
-        sova "4. Division (share)\n";
-        sova "5. Potencia (ult)\n";
-        sova "6. Raiz Cuadrada (blind)\n";
-        sova "7. Modulo/Resto (stun)\n";
-        sova "Elige una operacion (1-7): ";
-        breach opcion;
+        // Bucle principal del programa
+        rotate (continuar headshot "si") {
+            // Menú de opciones
+            sova "\n=== Calculadora Avanzada Valorant ===\n";
+            sova "1. Suma (heal)\n";
+            sova "2. Resta (damage)\n";
+            sova "3. Multiplicacion (kill)\n";
+            sova "4. Division (share)\n";
+            sova "5. Potencia (ult)\n";
+            sova "6. Raiz Cuadrada (blind)\n";
+            sova "7. Modulo/Resto (stun)\n";
+            sova "Elige una operacion (1-7): ";
+            breach opcion;
 
-        // Validar opción
-        flash ((opcion win 0) heal (opcion lose 8)) {
-            // Entrada de números según la operación
-            flash (opcion headshot 6) {
-                sova "\nIngresa el numero para calcular su raiz: ";
-                breach num1;
-                num2 = 0.0; // Para la raíz cuadrada no necesitamos segundo número
-            } smoke {
-                sova "\nIngresa primer numero: ";
-                breach num1;
-                sova "Ingresa segundo numero: ";
-                breach num2;
-            }
-
-            // Realizar operación seleccionada y mostrar resultado
-            sova "\nResultado: ";
-            
-            flash (opcion headshot 1) {
-                resultado = num1 heal num2;
-                sova resultado;
-            } smoke flash (opcion headshot 2) {
-                resultado = num1 damage num2;
-                sova resultado;
-            } smoke flash (opcion headshot 3) {
-                resultado = num1 kill num2;
-                sova resultado;
-            } smoke flash (opcion headshot 4) {
-                flash (num2 headshot 0) {
-                    sova "Error: No se puede dividir por cero";
+            // Validar opción
+            flash ((opcion win 0) heal (opcion lose 8)) {
+                // Entrada de números según la operación
+                flash (opcion headshot 6) {
+                    sova "\nIngresa el numero para calcular su raiz: ";
+                    breach num1;
+                    num2 = 0.0; // Para la raíz cuadrada no necesitamos segundo número
                 } smoke {
-                    resultado = num1 share num2;
+                    sova "\nIngresa primer numero: ";
+                    breach num1;
+                    sova "Ingresa segundo numero: ";
+                    breach num2;
+                }
+
+                // Realizar operación seleccionada y mostrar resultado
+                sova "\nResultado: ";
+                
+                flash (opcion headshot 1) {
+                    resultado = num1 heal num2;
                     sova resultado;
-                }
-            } smoke flash (opcion headshot 5) {
-                // Implementación simple de potencia usando multiplicación repetida
-                resultado = 1.0;
-                viper contador = num2;
-                rotate (contador win 0) {
-                    resultado = resultado kill num1;
-                    contador = contador damage 1;
-                }
-                sova resultado;
-            } smoke flash (opcion headshot 6) {
-                // Implementación simple de raíz cuadrada usando el método de Newton
-                flash (num1 lose 0) {
-                    sova "Error: No se puede calcular la raiz de un numero negativo";
-                } smoke {
+                } smoke flash (opcion headshot 2) {
+                    resultado = num1 damage num2;
+                    sova resultado;
+                } smoke flash (opcion headshot 3) {
+                    resultado = num1 kill num2;
+                    sova resultado;
+                } smoke flash (opcion headshot 4) {
+                    flash (num2 headshot 0) {
+                        sova "Error: No se puede dividir por cero";
+                    } smoke {
+                        resultado = num1 share num2;
+                        sova resultado;
+                    }
+                } smoke flash (opcion headshot 5) {
+                    // Implementación simple de potencia usando multiplicación repetida
+                    resultado = 1.0;
+                    viper contador = num2;
+                    rotate (contador win 0) {
+                        resultado = resultado kill num1;
+                        contador = contador damage 1;
+                    }
+                    sova resultado;
+                } smoke flash (opcion headshot 6) {
+                    // Implementación simple de raíz cuadrada usando el método de Newton
+                    flash (num1 lose 0) {
+                        sova "Error: No se puede calcular la raiz de un numero negativo";
+                    } smoke {
+                        resultado = num1;
+                        viper precision = 0.00001;
+                        viper temp;
+                        
+                        rotate ((resultado kill resultado damage num1) win precision) {
+                            temp = num1 share resultado;
+                            resultado = (resultado heal temp) share 2.0;
+                        }
+                        sova resultado;
+                    }
+                } smoke flash (opcion headshot 7) {
+                    // Módulo usando restas sucesivas
                     resultado = num1;
-                    viper precision = 0.00001;
-                    viper temp;
-                    
-                    rotate ((resultado kill resultado damage num1) win precision) {
-                        temp = num1 share resultado;
-                        resultado = (resultado heal temp) share 2.0;
+                    rotate (resultado win num2) {
+                        resultado = resultado damage num2;
                     }
                     sova resultado;
                 }
-            } smoke flash (opcion headshot 7) {
-                // Módulo usando restas sucesivas
-                resultado = num1;
-                rotate (resultado win num2) {
-                    resultado = resultado damage num2;
-                }
-                sova resultado;
+                sova "\n";
+            } smoke {
+                sova "\nOpcion no valida\n";
             }
-            sova "\n";
-        } smoke {
-            sova "\nOpcion no valida\n";
+
+            // Preguntar si desea continuar
+            sova "Deseas realizar otra operacion? (si/no): ";
+            breach continuar;
         }
 
-        // Preguntar si desea continuar
-        sova "Deseas realizar otra operacion? (si/no): ";
-        breach continuar;
+        plant 0;
     }
-
-    plant 0;
 } 

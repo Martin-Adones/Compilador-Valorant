@@ -149,6 +149,35 @@ ASTNode* create_output_node(ASTNode* expression) {
     return node;
 }
 
+ASTNode* create_class_node(const char* name, ASTNode* methods) {
+    ASTNode* node = create_node(NODE_CLASS);
+    node->value.string_value = strdup(name);
+    node->left = methods;  // Lista de métodos
+    if (methods) methods->parent = node;
+    return node;
+}
+
+ASTNode* create_method_node(const char* name, ASTNode* body) {
+    ASTNode* node = create_node(NODE_METHOD);
+    node->value.string_value = strdup(name);
+    node->left = body;  // Cuerpo del método
+    if (body) body->parent = node;
+    return node;
+}
+
+ASTNode* create_function_call_node(const char* name) {
+    ASTNode* node = create_node(NODE_FUNCTION_CALL);
+    node->value.string_value = strdup(name);
+    return node;
+}
+
+ASTNode* create_return_node(ASTNode* expression) {
+    ASTNode* node = create_node(NODE_PLANT);
+    node->left = expression;
+    if (expression) expression->parent = node;
+    return node;
+}
+
 void free_ast(ASTNode* node) {
     if (!node) return;
     
@@ -211,6 +240,18 @@ void print_ast(ASTNode* node, int level) {
             break;
         case NODE_OUTPUT:
             printf("Output\n");
+            break;
+        case NODE_CLASS:
+            printf("Class: %s\n", node->value.string_value);
+            break;
+        case NODE_METHOD:
+            printf("Method: %s\n", node->value.string_value);
+            break;
+        case NODE_FUNCTION_CALL:
+            printf("Function Call: %s\n", node->value.string_value);
+            break;
+        case NODE_PLANT:
+            printf("Return\n");
             break;
     }
     

@@ -1,21 +1,23 @@
 //FizzBuzz en Valorant
-agent spike() {
-    // Iteramos del 1 al 10 usando rush (for)
-    rush (sage num = 1; num lose 101; num = num heal 1) {
-        flash (((num share 15) kill 15) headshot num) {
-            sova "FizzBuzz\n";
-        } smoke { 
-            flash (((num share 3) kill 3) headshot num) {
-                sova "Fizz\n";
-            } smoke {
-                flash (((num share 5) kill 5) headshot num) {
-                    sova "Buzz\n";
+agent FizzBuzz {
+    sage FizzBuzz() {  // Constructor (main)
+        // Iteramos del 1 al 10 usando rush (for)
+        rush (sage num = 1; num lose 101; num = num heal 1) {
+            flash (((num share 15) kill 15) headshot num) {
+                sova "FizzBuzz\n";
+            } smoke { 
+                flash (((num share 3) kill 3) headshot num) {
+                    sova "Fizz\n";
                 } smoke {
-                    sova num;
-                    sova "\n";
-                }
-            } 
+                    flash (((num share 5) kill 5) headshot num) {
+                        sova "Buzz\n";
+                    } smoke {
+                        sova num;
+                        sova "\n";
+                    }
+                } 
+            }
         }
+        plant 0;
     }
-    plant 0;
 } 

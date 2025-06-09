@@ -5,11 +5,33 @@
 #include "interpreter.h"
 #include "ast.h"
 
+// Variable global para la clase actual
+ASTNode* current_class = NULL;
+
+// Función auxiliar para buscar un método en una clase
+ASTNode* find_method(ASTNode* class_node, const char* method_name) {
+    if (!class_node || class_node->type != NODE_CLASS) {
+        return NULL;
+    }
+    
+    // Buscar en la lista de métodos
+    ASTNode* current = class_node->left;
+    while (current) {
+        if (current->type == NODE_METHOD && 
+            strcmp(current->value.string_value, method_name) == 0) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
 ExecutionContext* create_context() {
     ExecutionContext* context = (ExecutionContext*)malloc(sizeof(ExecutionContext));
     context->variables = NULL;
     context->error_count = 0;
     context->error_message[0] = '\0';
+    context->has_return = 0;
     return context;
 }
 
@@ -120,6 +142,7 @@ char* value_to_string(Value value) {
 Value interpret_node(void* node, ExecutionContext* context) {
     if (!node) {
         Value null_value = {0};
+        null_value.type = TYPE_SAGE;
         return null_value;
     }
 
@@ -128,6 +151,90 @@ Value interpret_node(void* node, ExecutionContext* context) {
     result.type = TYPE_SAGE;
     
     switch(ast_node->type) {
+        case NODE_CLASS: {
+            // Guardar la referencia a la clase actual
+            current_class = ast_node;
+            
+            // Buscar el constructor (método con el mismo nombre que la clase)
+            ASTNode* constructor = find_method(ast_node, ast_node->value.string_value);
+            if (constructor) {
+                return interpret_node(constructor, context);
+            }
+            break;
+        }
+
+        case NODE_METHOD: {
+            // Ejecutar el cuerpo del método
+            if (ast_node->left) {
+                Value method_result = interpret_node(ast_node->left, context);
+                return method_result;
+            }
+            Value null_value = {0};
+            null_value.type = TYPE_SAGE;
+            return null_value;
+        }
+
+        case NODE_FUNCTION_CALL: {
+            // Buscar el método en la clase actual
+            const char* method_name = ast_node->value.string_value;
+            ASTNode* method = find_method(current_class, method_name);
+            
+            if (!method) {
+                char error_msg[256];
+                snprintf(error_msg, sizeof(error_msg), "Método '%s' no encontrado", method_name);
+                report_error(context, error_msg);
+                Value null_value = {0};
+                null_value.type = TYPE_SAGE;
+                return null_value;
+            }
+            
+            // Crear un nuevo contexto para el método
+            ExecutionContext* method_context = create_context();
+            
+            // Ejecutar el método
+            Value method_result = interpret_node(method, method_context);
+            Value return_value = method_result;  // No necesitamos copiar aquí
+            
+            // Liberar el contexto del método
+            free_context(method_context);
+            
+            return return_value;
+        }
+
+        case NODE_PLANT: {
+            if (ast_node->left) {
+                Value return_value = interpret_node(ast_node->left, context);
+                context->has_return = 1;
+                return return_value;
+            }
+            Value null_value = {0};
+            null_value.type = TYPE_SAGE;
+            context->has_return = 1;
+            return null_value;
+        }
+
+        case NODE_BLOCK: {
+            ASTNode* current = ast_node->left;
+            Value last_result = {0};
+            last_result.type = TYPE_SAGE;
+            
+            while (current && !context->has_return) {
+                Value current_result = interpret_node(current, context);
+                if (context->has_return) {
+                    return current_result;
+                }
+                last_result = current_result;
+                current = current->next;
+            }
+            return last_result;
+        }
+
+        case NODE_OUTPUT: {
+            Value val = interpret_node(ast_node->left, context);
+            print_value(val);
+            return val;
+        }
+
         case NODE_NUMBER: {
             if (ast_node->data_type == TYPE_INT) {
                 result.type = TYPE_SAGE;
@@ -327,26 +434,10 @@ Value interpret_node(void* node, ExecutionContext* context) {
             }
             break;
         }
-        case NODE_BLOCK: {
-            ASTNode* current = ast_node->left;
-            while (current != NULL) {
-                result = interpret_node(current, context);
-                if (context->error_count > 0 && strcmp(context->error_message, "Programa terminado") != 0) {
-                    break;
-                }
-                current = current->next;
-            }
-            break;
-        }
         case NODE_DECLARATION: {
             Value init_value = interpret_node(ast_node->right, context);
             set_variable(context, ast_node->value.string_value, init_value);
             result = init_value;
-            break;
-        }
-        case NODE_OUTPUT: {
-            Value value = interpret_node(ast_node->left, context);
-            print_value(value);
             break;
         }
         case NODE_ASSIGNMENT: {
@@ -437,7 +528,6 @@ Value interpret_node(void* node, ExecutionContext* context) {
             break;
         }
         case NODE_ELSE:
-        case NODE_PLANT:
             // Implementación pendiente
             break;
     }
@@ -446,11 +536,16 @@ Value interpret_node(void* node, ExecutionContext* context) {
 }
 
 void interpret_program(ASTNode* program) {
-    ExecutionContext* context = create_context();
-    Value result = interpret_node(program, context);
+    if (!program) return;
     
-    if (context->error_count > 0 && strcmp(context->error_message, "Programa terminado") != 0) {
-        printf("\nPrograma terminado con errores\n");
+    // Reiniciar variables globales
+    current_class = NULL;
+    
+    ExecutionContext* context = create_context();
+    
+    // Si es una clase, interpretar directamente
+    if (program->type == NODE_CLASS) {
+        interpret_node(program, context);
     }
     
     free_context(context);

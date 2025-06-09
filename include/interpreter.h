@@ -35,6 +35,7 @@ typedef struct {
     Variable* variables;
     int error_count;
     char error_message[256];
+    int has_return;  // Nuevo campo para controlar los retornos
 } ExecutionContext;
 
 // Funciones del intérprete
@@ -45,5 +46,6 @@ Value* get_variable(ExecutionContext* context, const char* name);
 void report_error(ExecutionContext* context, const char* message);
 Value interpret_node(void* node, ExecutionContext* context);
 Variable* find_variable(ExecutionContext* context, const char* name);
+void interpret_program(ASTNode* program);
 
 #endif // INTERPRETER_H 
