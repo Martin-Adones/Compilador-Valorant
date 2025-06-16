@@ -5,16 +5,15 @@
 #include "interpreter.h"
 #include "ast.h"
 
-// Variable global para la clase actual
+// Variable global para la clase actual (aca guardo el agent actual)
 ASTNode* current_class = NULL;
 
-// Función auxiliar para buscar un método en una clase
+// Funcion para buscar un metodo en una clase (devuelve el puntero o NULL)
 ASTNode* find_method(ASTNode* class_node, const char* method_name) {
     if (!class_node || class_node->type != NODE_CLASS) {
         return NULL;
     }
-    
-    // Buscar en la lista de métodos
+    // Recorre la lista de metodos
     ASTNode* current = class_node->left;
     while (current) {
         if (current->type == NODE_METHOD && 
@@ -26,6 +25,7 @@ ASTNode* find_method(ASTNode* class_node, const char* method_name) {
     return NULL;
 }
 
+// Crea un contexto de ejecucion (variables locales, errores, etc)
 ExecutionContext* create_context() {
     ExecutionContext* context = (ExecutionContext*)malloc(sizeof(ExecutionContext));
     context->variables = NULL;
@@ -35,6 +35,7 @@ ExecutionContext* create_context() {
     return context;
 }
 
+// Libera el contexto (borra todas las variables)
 void free_context(ExecutionContext* context) {
     Variable* current = context->variables;
     while (current != NULL) {
@@ -49,6 +50,7 @@ void free_context(ExecutionContext* context) {
     free(context);
 }
 
+// Setea una variable (si existe la pisa, si no la crea)
 void set_variable(ExecutionContext* context, const char* name, Value value) {
     Variable* var = context->variables;
     while (var != NULL) {
@@ -69,6 +71,7 @@ void set_variable(ExecutionContext* context, const char* name, Value value) {
     context->variables = new_var;
 }
 
+// Obtiene el puntero a una variable (devuelve NULL si no existe)
 Value* get_variable(ExecutionContext* context, const char* name) {
     Variable* var = context->variables;
     while (var != NULL) {
@@ -80,6 +83,7 @@ Value* get_variable(ExecutionContext* context, const char* name) {
     return NULL;
 }
 
+// Busca una variable en el contexto (devuelve el puntero o NULL)
 Variable* find_variable(ExecutionContext* context, const char* name) {
     Variable* current = context->variables;
     while (current) {
@@ -91,6 +95,7 @@ Variable* find_variable(ExecutionContext* context, const char* name) {
     return NULL;
 }
 
+// Reporta un error (incrementa el contador y guarda el mensaje)
 void report_error(ExecutionContext* context, const char* message) {
     context->error_count++;
     strncpy(context->error_message, message, sizeof(context->error_message) - 1);
@@ -98,6 +103,7 @@ void report_error(ExecutionContext* context, const char* message) {
     fprintf(stderr, "Error: %s\n", message);
 }
 
+// Imprime un valor (segun su tipo)
 void print_value(Value value) {
     switch(value.type) {
         case TYPE_SAGE:
@@ -112,6 +118,7 @@ void print_value(Value value) {
     }
 }
 
+// Convierte un valor a string (devuelve un puntero a la cadena)
 char* value_to_string(Value value) {
     char* result;
     switch(value.type) {
@@ -139,6 +146,7 @@ char* value_to_string(Value value) {
     return result;
 }
 
+// Interpreta un nodo del AST (segun su tipo)
 Value interpret_node(void* node, ExecutionContext* context) {
     if (!node) {
         Value null_value = {0};
@@ -155,12 +163,12 @@ Value interpret_node(void* node, ExecutionContext* context) {
             // Guardar la referencia a la clase actual
             current_class = ast_node;
 
-            // Buscar y ejecutar el método 'spike' si existe
+            // Buscar y ejecutar el metodo 'spike' si existe
             ASTNode* spike_method = find_method(ast_node, "spike");
             if (spike_method) {
                 return interpret_node(spike_method, context);
             }
-            // Si no existe 'spike', buscar constructor (método con el mismo nombre que la clase)
+            // Si no existe 'spike', buscar constructor (metodo con el mismo nombre que la clase)
             ASTNode* constructor = find_method(ast_node, ast_node->value.string_value);
             if (constructor) {
                 return interpret_node(constructor, context);
@@ -577,6 +585,7 @@ Value interpret_node(void* node, ExecutionContext* context) {
     return result;
 }
 
+// Interpreta un programa (nodo raiz del AST)
 void interpret_program(ASTNode* program) {
     if (!program) return;
     

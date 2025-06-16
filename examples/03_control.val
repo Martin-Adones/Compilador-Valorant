@@ -1,11 +1,11 @@
 agent Control {
-    sage spike() {  // Método principal
+    sage spike() {  // Metodo principal
         sage contador = 1;
         sage limite = 5;
         
         sova "=== Prueba de ROTATE (while) ===\n";
         rotate (contador lose limite) {
-            sova "Iteración: ";
+            sova "Iteracion: ";
             sova contador;
             contador = contador heal 1;
             sova "\n";
@@ -15,13 +15,13 @@ agent Control {
         sage puntuacion = 85;
         
         flash (puntuacion win 90) {
-            sova "\nExcelente puntuación!";
+            sova "\nExcelente puntuacion!";
         } smoke {
             flash (puntuacion win 80) {
-                sova "\nMuy buena puntuación!";
+                sova "\nMuy buena puntuacion!";
             } smoke {
                 flash (puntuacion win 70) {
-                    sova "\nBuena puntuación!";
+                    sova "\nBuena puntuacion!";
                 } smoke {
                     sova "\nNecesitas mejorar";
                 }
@@ -31,7 +31,7 @@ agent Control {
         sova "\n=== Prueba de DEFUSE (break) ===\n";
         sage i = 1;
         rotate (i lose 1000) {
-            sova "Número actual: ";
+            sova "Numero actual: ";
             sova i;
             sova "\n";
             flash (i headshot 997) {

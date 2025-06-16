@@ -1,13 +1,13 @@
-// Test 01: Tipos de Datos Básicos
+// Test 01: Tipos de datos basicos
 agent TiposDatos {
-    sage spike() {  // Método principal
+    sage spike() {  // Metodo principal
         // Prueba de sage (enteros)
         sage numero1 = 42;
         sage numero2;
         sova "=== Prueba de SAGE (enteros) ===\n";
-        sova "Número inicializado: ";
+        sova "Numero inicializado: ";
         sova numero1;
-        sova "\nNúmero sin inicializar: ";
+        sova "\nNumero sin inicializar: ";
         sova numero2;
         
         // Prueba de viper (decimales)
@@ -20,7 +20,7 @@ agent TiposDatos {
         sova decimal2;
         
         // Prueba de cypher (texto)
-        cypher texto1 = "¡Hola Valorant!";
+        cypher texto1 = "Hola Valorant!";
         cypher texto2;
         sova "\n=== Prueba de CYPHER (texto) ===\n";
         sova "Texto inicializado: ";

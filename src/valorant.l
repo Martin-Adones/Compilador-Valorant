@@ -7,11 +7,10 @@
 
 int line_num = 1;
 
-// Función para procesar caracteres de escape
+// Funcion para procesar caracteres de escape (tipo \n, \t, etc)
 char* process_escape_sequences(const char* str) {
     char* result = malloc(strlen(str) + 1);
     int i = 0, j = 0;
-    
     while (str[i] != '\0') {
         if (str[i] == '\\') {
             i++;
@@ -31,6 +30,7 @@ char* process_escape_sequences(const char* str) {
     result[j] = '\0';
     return result;
 }
+
 %}
 
 %option noyywrap
@@ -38,9 +38,9 @@ char* process_escape_sequences(const char* str) {
 
 %%
 
-[ \t]+          ; /* Ignorar espacios y tabulaciones */
+[ \t]+          ; /* Ignora espacios y tabs */
 [\n]            { line_num++; }
-"//".*          ; /* Ignorar comentarios de una linea */
+"//".*          ; /* Ignora comentarios de una linea */
 
 "agent"         { return AGENT; }      /* Palabra clave para funcion */
 "plant"         { return PLANT; }      /* Palabra clave para return */
@@ -60,7 +60,7 @@ char* process_escape_sequences(const char* str) {
 "viper"         { return VIPER; }      /* Float */
 "cypher"        { return CYPHER; }     /* String */
 "breach"        { return BREACH; }     /* Input */
-"sova"          { return SOVA; }       /* Output */
+"sova"          { return SOVA; }       /* Print */
 "eco"           { return NOTEQUAL; }     /* != */
 "save"          { return LESSEQUAL; }    /* <= */
 "fullbuy"       { return GREATEREQUAL; } /* >=*/

@@ -11,7 +11,7 @@ void yyerror(const char* s);
 
 ASTNode* root = NULL;
 
-// Para depuración
+// Para debug, si queres ver que pasa
 #define YYDEBUG 1
 %}
 
@@ -22,7 +22,7 @@ ASTNode* root = NULL;
     ASTNode* ast_node;
 }
 
-/* Tokens */
+/* Tokens (palabras reservadas y simbolos) */
 %token AGENT PLANT
 %token WIN LOSE HEADSHOT SHARE
 %token HEAL DAMAGE KILL
@@ -36,8 +36,7 @@ ASTNode* root = NULL;
 %token <string_val> IDENTIFIER
 %token NOTEQUAL LESSEQUAL GREATEREQUAL
 
-
-/* Tipos de no terminales */
+/* Tipos de no terminales (para el AST) */
 %type <ast_node> program class_definition method_list method
 %type <ast_node> statement_list statement
 %type <ast_node> expression declaration
@@ -49,7 +48,7 @@ ASTNode* root = NULL;
 %type <ast_node> parameter_list_opt parameter_list parameter
 %type <ast_node> argument_list_opt argument_list
 
-/* Precedencia y asociatividad */
+/* Precedencia y asociatividad (para que no se rompa todo) */
 %right '='
 %left WIN LOSE HEADSHOT NOTEQUAL LESSEQUAL GREATEREQUAL
 %left HEAL DAMAGE

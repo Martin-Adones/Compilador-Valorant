@@ -6,14 +6,14 @@
 #include <string.h>
 #include "ast.h"
 
-// Tipos de valores
+// Tipos de valores (los que podes guardar)
 typedef enum {
     TYPE_SAGE,    // int
     TYPE_VIPER,   // float
     TYPE_CYPHER   // string
 } ValueType;
 
-// Estructura para almacenar valores
+// Estructura para guardar valores
 typedef struct {
     ValueType type;
     union {
@@ -23,22 +23,22 @@ typedef struct {
     } value;
 } Value;
 
-// Estructura para variables
+// Estructura para variables (nombre, valor y el siguiente)
 typedef struct Variable {
     char* name;
     Value value;
     struct Variable* next;
 } Variable;
 
-// Contexto de ejecución
+// Contexto de ejecucion (aca van las variables y errores)
 typedef struct {
     Variable* variables;
     int error_count;
     char error_message[256];
-    int has_return;  // Nuevo campo para controlar los retornos
+    int has_return;  // Para saber si hay return
 } ExecutionContext;
 
-// Funciones del intérprete
+// Funciones del interprete
 ExecutionContext* create_context();
 void free_context(ExecutionContext* context);
 void set_variable(ExecutionContext* context, const char* name, Value value);
@@ -48,4 +48,4 @@ Value interpret_node(void* node, ExecutionContext* context);
 Variable* find_variable(ExecutionContext* context, const char* name);
 void interpret_program(ASTNode* program);
 
-#endif // INTERPRETER_H 
+#endif // INTERPRETER_H

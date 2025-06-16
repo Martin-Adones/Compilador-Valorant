@@ -5,29 +5,29 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Tipos de nodos del AST
+// Tipos de nodos del AST (cada uno es una cosa del lenguaje)
 typedef enum {
-    NODE_NUMBER,      // Números literales
-    NODE_STRING,      // Cadenas literales
-    NODE_IDENTIFIER,  // Identificadores
-    NODE_BINARY_OP,   // Operaciones binarias
-    NODE_ASSIGNMENT,  // Asignaciones
-    NODE_IF,          // Estructura if
-    NODE_ELSE,        // Estructura else
-    NODE_WHILE,       // Estructura while
-    NODE_BLOCK,       // Bloque de código
-    NODE_DECLARATION, // Declaración de variables
-    NODE_INPUT,       // Entrada (scanf)
-    NODE_OUTPUT,      // Salida (printf)
+    NODE_NUMBER,      // Numeros
+    NODE_STRING,      // Strings
+    NODE_IDENTIFIER,  // Variables
+    NODE_BINARY_OP,   // Operaciones tipo +, -, etc
+    NODE_ASSIGNMENT,  // a = b
+    NODE_IF,          // flash
+    NODE_ELSE,        // smoke
+    NODE_WHILE,       // rotate
+    NODE_BLOCK,       // Bloque de codigo
+    NODE_DECLARATION, // Declaracion de variable
+    NODE_INPUT,       // Leer (breach)
+    NODE_OUTPUT,      // Imprimir (sova)
     NODE_DEFUSE,      // Break
     NODE_PLANT,       // Return
-    NODE_FOR,         // For loop
-    NODE_CLASS,       // Clase
-    NODE_METHOD,      // Método
-    NODE_FUNCTION_CALL // Llamada a función
+    NODE_FOR,         // rush
+    NODE_CLASS,       // agent
+    NODE_METHOD,      // funcion
+    NODE_FUNCTION_CALL // llamada a funcion
 } NodeType;
 
-// Tipos de datos
+// Tipos de datos (los que soporta el lenguaje)
 typedef enum {
     TYPE_INT,
     TYPE_FLOAT,
@@ -35,19 +35,19 @@ typedef enum {
     TYPE_VOID
 } DataType;
 
-// Operadores binarios
+// Operadores binarios (los que podes usar)
 typedef enum {
     OP_ADD,           // +
     OP_SUB,           // -
     OP_MUL,           // *
     OP_DIV,           // /
-    OP_WIN,           // win (mayor que)
-    OP_LOSE,          // lose (menor que)
+    OP_WIN,           // win (mayor)
+    OP_LOSE,          // lose (menor)
     OP_HEADSHOT,      // headshot (igual)
     OP_NOTEQUAL,      // eco (diferente)
     OP_LESSEQUAL,     // save (<=)
     OP_GREATEREQUAL,  // fullbuy (>=)
-    OP_SHARE          // share (asignación)
+    OP_SHARE          // share (asignacion)
 } BinaryOp;
 
 typedef union {

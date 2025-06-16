@@ -8,7 +8,7 @@ extern FILE* yyin;
 extern ASTNode* root;
 
 int main(int argc, char** argv) {
-    // Configurar buffers de entrada/salida
+    // Desactivo el buffer para que todo salga al toque
     setvbuf(stdout, NULL, _IONBF, 0);
     setvbuf(stdin, NULL, _IONBF, 0);
 
@@ -27,17 +27,17 @@ int main(int argc, char** argv) {
     printf("Compilador Valorant v1.0\n");
     
     if (yyparse() != 0) {
-        printf("Error durante el análisis sintáctico\n");
+        printf("Error durante el analisis sintactico\n");
         return 1;
     }
 
-    // Crear contexto y ejecutar
+    // Arranca el contexto y ejecuta el programa
     ExecutionContext* context = create_context();
     printf("\nEjecutando el programa:\n");
     printf("----------------------\n");
     Value result = interpret_node(root, context);
 
-    // Limpiar
+    // Limpia todo
     free_ast(root);
     free_context(context);
     fclose(input);
