@@ -24,7 +24,11 @@ typedef enum {
     NODE_FOR,         // For loop
     NODE_CLASS,       // Clase
     NODE_METHOD,      // Método
-    NODE_FUNCTION_CALL // Llamada a función
+    NODE_FUNCTION_CALL, // Llamada a función
+    NODE_PARAM,       // Parámetro
+    NODE_PARAM_LIST,  // Lista de parámetros
+    NODE_ARG_LIST,    // Lista de argumentos
+    NODE_OPERATOR     // Operador
 } NodeType;
 
 // Tipos de datos
@@ -47,7 +51,13 @@ typedef enum {
     OP_NOTEQUAL,      // eco (diferente)
     OP_LESSEQUAL,     // save (<=)
     OP_GREATEREQUAL,  // fullbuy (>=)
-    OP_SHARE          // share (asignación)
+    OP_SHARE,         // share (asignación)
+    OP_EQ,            // ==
+    OP_NEQ,           // !=
+    OP_LT,            // <
+    OP_GT,            // >
+    OP_LE,            // <=
+    OP_GE             // >=
 } BinaryOp;
 
 typedef union {
@@ -66,6 +76,7 @@ typedef struct ASTNode {
     NodeValue value;
     struct ASTNode* left;
     struct ASTNode* right;
+    struct ASTNode* children;
     struct ASTNode* next;  // Para listas de instrucciones
     struct ASTNode* parent; // Referencia al nodo padre
     struct ASTNode* init;  // For loop initialization
@@ -78,7 +89,7 @@ ASTNode* create_number_node(int value);
 ASTNode* create_float_node(float value);
 ASTNode* create_string_node(const char* value);
 ASTNode* create_identifier_node(char* name);
-ASTNode* create_binary_op_node(BinaryOp op, ASTNode* left, ASTNode* right);
+ASTNode* create_binary_op_node(ASTNode* left, ASTNode* op, ASTNode* right);
 ASTNode* create_assignment_node(ASTNode* left, ASTNode* right);
 ASTNode* create_if_node(ASTNode* condition, ASTNode* then_block, ASTNode* else_block);
 ASTNode* create_while_node(ASTNode* condition, ASTNode* body);
@@ -88,9 +99,13 @@ ASTNode* create_input_node(ASTNode* variable);
 ASTNode* create_output_node(ASTNode* expression);
 ASTNode* create_for_node(ASTNode* init, ASTNode* condition, ASTNode* increment, ASTNode* body);
 ASTNode* create_class_node(const char* name, ASTNode* methods);
-ASTNode* create_method_node(const char* name, ASTNode* body);
-ASTNode* create_function_call_node(const char* name);
+ASTNode* create_method_node(const char* name, ASTNode* params, ASTNode* body);
+ASTNode* create_function_call_node(const char* name, ASTNode* args);
 ASTNode* create_return_node(ASTNode* expression);
+ASTNode* create_param_node(const char* name, DataType type);
+ASTNode* create_param_list_node(ASTNode* param);
+ASTNode* create_arg_list_node(ASTNode* arg);
+ASTNode* create_operator_node(BinaryOp op);
 
 // Funciones de manejo del AST
 void free_ast(ASTNode* node);

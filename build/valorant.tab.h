@@ -54,32 +54,41 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    AGENT = 258,                   /* AGENT  */
-    PLANT = 259,                   /* PLANT  */
-    WIN = 260,                     /* WIN  */
-    LOSE = 261,                    /* LOSE  */
-    HEADSHOT = 262,                /* HEADSHOT  */
-    SHARE = 263,                   /* SHARE  */
-    HEAL = 264,                    /* HEAL  */
-    DAMAGE = 265,                  /* DAMAGE  */
-    KILL = 266,                    /* KILL  */
-    DEFUSE = 267,                  /* DEFUSE  */
-    ROTATE = 268,                  /* ROTATE  */
-    FLASH = 269,                   /* FLASH  */
-    SMOKE = 270,                   /* SMOKE  */
-    RUSH = 271,                    /* RUSH  */
-    SAGE = 272,                    /* SAGE  */
-    VIPER = 273,                   /* VIPER  */
-    CYPHER = 274,                  /* CYPHER  */
-    BREACH = 275,                  /* BREACH  */
-    SOVA = 276,                    /* SOVA  */
-    INT_LITERAL = 277,             /* INT_LITERAL  */
-    FLOAT_LITERAL = 278,           /* FLOAT_LITERAL  */
-    STRING_LITERAL = 279,          /* STRING_LITERAL  */
-    IDENTIFIER = 280,              /* IDENTIFIER  */
-    NOTEQUAL = 281,                /* NOTEQUAL  */
-    LESSEQUAL = 282,               /* LESSEQUAL  */
-    GREATEREQUAL = 283             /* GREATEREQUAL  */
+    SAGE = 258,                    /* SAGE  */
+    VIPER = 259,                   /* VIPER  */
+    CYPHER = 260,                  /* CYPHER  */
+    IDENTIFIER = 261,              /* IDENTIFIER  */
+    STRING_LITERAL = 262,          /* STRING_LITERAL  */
+    INTEGER_LITERAL = 263,         /* INTEGER_LITERAL  */
+    FLOAT_LITERAL = 264,           /* FLOAT_LITERAL  */
+    HEAL = 265,                    /* HEAL  */
+    DAMAGE = 266,                  /* DAMAGE  */
+    KILL = 267,                    /* KILL  */
+    SHARE = 268,                   /* SHARE  */
+    EQUAL = 269,                   /* EQUAL  */
+    NOTEQUAL = 270,                /* NOTEQUAL  */
+    LESS = 271,                    /* LESS  */
+    LESSEQUAL = 272,               /* LESSEQUAL  */
+    GREATER = 273,                 /* GREATER  */
+    GREATEREQUAL = 274,            /* GREATEREQUAL  */
+    SMOKE = 275,                   /* SMOKE  */
+    FLASH = 276,                   /* FLASH  */
+    DEFUSE = 277,                  /* DEFUSE  */
+    IF = 278,                      /* IF  */
+    ELSE = 279,                    /* ELSE  */
+    WHILE = 280,                   /* WHILE  */
+    FOR = 281,                     /* FOR  */
+    RETURN = 282,                  /* RETURN  */
+    PRINT = 283,                   /* PRINT  */
+    INPUT = 284,                   /* INPUT  */
+    OUTPUT = 285,                  /* OUTPUT  */
+    LPAREN = 286,                  /* LPAREN  */
+    RPAREN = 287,                  /* RPAREN  */
+    LBRACE = 288,                  /* LBRACE  */
+    RBRACE = 289,                  /* RBRACE  */
+    SEMICOLON = 290,               /* SEMICOLON  */
+    COMMA = 291,                   /* COMMA  */
+    ASSIGN = 292                   /* ASSIGN  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -88,14 +97,15 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 18 "src/valorant.y"
+#line 12 "src/valorant.y"
 
     int int_val;
     float float_val;
     char* string_val;
-    ASTNode* ast_node;
+    ASTNode* node;
+    Operator op_val;
 
-#line 99 "build/valorant.tab.h"
+#line 109 "build/valorant.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

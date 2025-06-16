@@ -1,238 +1,187 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../include/ast.h"
 
-extern int yylex();
-extern int line_num;
-extern char* yytext;
-extern FILE* yyin;
-void yyerror(const char* s);
-
-ASTNode* root = NULL;
-
-// Para depuración
-#define YYDEBUG 1
+void yyerror(const char *s);
+int yylex(void);
+extern int yylineno;
 %}
 
 %union {
     int int_val;
     float float_val;
     char* string_val;
-    ASTNode* ast_node;
+    ASTNode* node;
+    BinaryOp op_val;
 }
 
-/* Tokens */
-%token AGENT PLANT
-%token WIN LOSE HEADSHOT SHARE
-%token HEAL DAMAGE KILL
-%token DEFUSE ROTATE FLASH SMOKE RUSH
-%token SAGE VIPER CYPHER
-%token BREACH SOVA
-
-%token <int_val> INT_LITERAL
-%token <float_val> FLOAT_LITERAL
-%token <string_val> STRING_LITERAL
+%token <int_val> SAGE
+%token <float_val> VIPER
+%token <string_val> CYPHER
 %token <string_val> IDENTIFIER
-%token NOTEQUAL LESSEQUAL GREATEREQUAL
+%token <string_val> STRING_LITERAL
+%token <int_val> INTEGER_LITERAL
+%token <float_val> FLOAT_LITERAL
 
+%token <op_val> HEAL DAMAGE KILL SHARE
+%token <op_val> EQUAL NOTEQUAL LESS LESSEQUAL GREATER GREATEREQUAL
+%token SMOKE FLASH DEFUSE
+%token IF ELSE WHILE FOR RETURN
+%token PRINT INPUT OUTPUT
+%token LPAREN RPAREN LBRACE RBRACE SEMICOLON COMMA
+%token ASSIGN
 
-/* Tipos de no terminales */
-%type <ast_node> program class_definition method_list method
-%type <ast_node> statement_list statement
-%type <ast_node> expression declaration
-%type <ast_node> if_statement while_statement for_statement
-%type <ast_node> input_statement output_statement
-%type <ast_node> block return_statement assignment
-%type <ast_node> function_call for_init for_condition for_increment
-%type <ast_node> else_if_chain
-
-/* Precedencia y asociatividad */
-%right '='
-%left WIN LOSE HEADSHOT NOTEQUAL LESSEQUAL GREATEREQUAL
-%left HEAL DAMAGE
-%left KILL SHARE
+%type <node> program
+%type <node> class_declaration
+%type <node> method_declaration
+%type <node> block
+%type <node> statement
+%type <node> declaration
+%type <node> assignment
+%type <node> if_statement
+%type <node> while_statement
+%type <node> for_statement
+%type <node> return_statement
+%type <node> print_statement
+%type <node> input_statement
+%type <node> output_statement
+%type <node> expression
+%type <node> param_list
+%type <node> param
+%type <node> arg_list
 
 %%
 
 program
-    : class_definition                { root = $1; }
+    : class_declaration { $$ = $1; }
     ;
 
-class_definition
-    : AGENT IDENTIFIER '{' method_list '}'  { 
-        $$ = create_class_node($2, $4);
-        free($2);
-    }
+class_declaration
+    : SAGE IDENTIFIER LBRACE method_declaration RBRACE { $$ = create_class_node($2, $4); }
     ;
 
-method_list
-    : method                         { $$ = $1; }
-    | method_list method            {
-        ASTNode* temp = $1;
-        while (temp->next) temp = temp->next;
-        temp->next = $2;
-        $$ = $1;
-    }
+method_declaration
+    : SAGE IDENTIFIER LPAREN param_list RPAREN block { $$ = create_method_node($2, $4, $6); }
+    | SAGE IDENTIFIER LPAREN RPAREN block { $$ = create_method_node($2, NULL, $5); }
     ;
 
-method
-    : SAGE IDENTIFIER '(' ')' block  { 
-        $$ = create_method_node($2, $5);
-        free($2);
-    }
+param_list
+    : param { $$ = create_param_list_node($1); }
+    | param_list COMMA param { $$ = $1; $1->next = $3; }
+    ;
+
+param
+    : SAGE IDENTIFIER { $$ = create_param_node($2, TYPE_INT); }
+    | VIPER IDENTIFIER { $$ = create_param_node($2, TYPE_FLOAT); }
+    | CYPHER IDENTIFIER { $$ = create_param_node($2, TYPE_STRING); }
     ;
 
 block
-    : '{' statement_list '}'         { $$ = create_block_node($2); }
-    | '{' '}'                        { $$ = create_block_node(NULL); }
-    ;
-
-statement_list
-    : statement                      { $$ = $1; }
-    | statement_list statement       {
-        if ($1 == NULL) {
-            $$ = $2;
-        } else {
-            ASTNode* temp = $1;
-            while (temp->next) temp = temp->next;
-            temp->next = $2;
-            $$ = $1;
-        }
-    }
+    : LBRACE statement RBRACE { $$ = create_block_node($2); }
     ;
 
 statement
-    : declaration ';'                { $$ = $1; }
-    | assignment ';'                 { $$ = $1; }
-    | if_statement                   { $$ = $1; }
-    | while_statement               { $$ = $1; }
-    | for_statement                 { $$ = $1; }
-    | input_statement ';'           { $$ = $1; }
-    | output_statement ';'          { $$ = $1; }
-    | return_statement ';'          { $$ = $1; }
-    | function_call ';'             { $$ = $1; }
-    | DEFUSE ';'                    { 
-        $$ = create_node(NODE_DEFUSE);
-    }
-    ;
-
-for_init
-    : declaration                     { $$ = $1; }
-    | assignment                      { $$ = $1; }
-    ;
-
-for_condition
-    : expression                      { $$ = $1; }
-    ;
-
-for_increment
-    : assignment                      { $$ = $1; }
-    | IDENTIFIER '=' expression       {
-        ASTNode* node = create_node(NODE_ASSIGNMENT);
-        node->left = create_identifier_node($1);
-        node->right = $3;
-        $$ = node;
-        free($1);
-    }
-    ;
-
-for_statement
-    : RUSH '(' for_init ';' for_condition ';' for_increment ')' block {
-        // Creamos un nodo especial para el bucle for
-        ASTNode* node = create_node(NODE_FOR);
-        node->init = $3;      // Inicialización
-        node->left = $5;      // Condición
-        node->increment = $7; // Incremento
-        node->right = $9;     // Cuerpo del bucle
-        $$ = node;
-    }
+    : declaration SEMICOLON { $$ = $1; }
+    | assignment SEMICOLON { $$ = $1; }
+    | if_statement { $$ = $1; }
+    | while_statement { $$ = $1; }
+    | for_statement { $$ = $1; }
+    | return_statement SEMICOLON { $$ = $1; }
+    | print_statement SEMICOLON { $$ = $1; }
+    | input_statement SEMICOLON { $$ = $1; }
+    | output_statement SEMICOLON { $$ = $1; }
+    | expression SEMICOLON { $$ = $1; }
+    | statement statement { $$ = $1; $1->next = $2; }
     ;
 
 declaration
-    : SAGE IDENTIFIER '=' expression  { $$ = create_declaration_node(TYPE_INT, $2, $4); free($2); }
-    | VIPER IDENTIFIER '=' expression { $$ = create_declaration_node(TYPE_FLOAT, $2, $4); free($2); }
-    | CYPHER IDENTIFIER '=' expression { $$ = create_declaration_node(TYPE_STRING, $2, $4); free($2); }
-    | SAGE IDENTIFIER                 { $$ = create_declaration_node(TYPE_INT, $2, NULL); free($2); }
-    | VIPER IDENTIFIER               { $$ = create_declaration_node(TYPE_FLOAT, $2, NULL); free($2); }
-    | CYPHER IDENTIFIER              { $$ = create_declaration_node(TYPE_STRING, $2, NULL); free($2); }
-    ;
-
-expression
-    : INT_LITERAL                     { $$ = create_number_node($1); }
-    | FLOAT_LITERAL                   { $$ = create_float_node($1); }
-    | STRING_LITERAL                  { $$ = create_string_node($1); free($1); }
-    | IDENTIFIER                      { $$ = create_identifier_node($1); free($1); }
-    | function_call                   { $$ = $1; }
-    | expression HEAL expression      { $$ = create_binary_op_node(OP_ADD, $1, $3); }
-    | expression DAMAGE expression    { $$ = create_binary_op_node(OP_SUB, $1, $3); }
-    | expression KILL expression      { $$ = create_binary_op_node(OP_MUL, $1, $3); }
-    | expression SHARE expression     { $$ = create_binary_op_node(OP_DIV, $1, $3); }
-    | expression WIN expression       { $$ = create_binary_op_node(OP_WIN, $1, $3); }
-    | expression LOSE expression      { $$ = create_binary_op_node(OP_LOSE, $1, $3); }
-    | expression HEADSHOT expression  { $$ = create_binary_op_node(OP_HEADSHOT, $1, $3); }
-    | '(' expression ')'             { $$ = $2; }
-    | expression NOTEQUAL expression       { $$ = create_binary_op_node(OP_NOTEQUAL, $1, $3); }
-    | expression LESSEQUAL expression      { $$ = create_binary_op_node(OP_LESSEQUAL, $1, $3); }
-    | expression GREATEREQUAL expression   { $$ = create_binary_op_node(OP_GREATEREQUAL, $1, $3); }
-    ;
-
-if_statement
-    : FLASH '(' expression ')' block                  { 
-        $$ = create_if_node($3, $5, NULL); 
+    : SAGE IDENTIFIER { $$ = create_declaration_node(TYPE_INT, $2, NULL); }
+    | VIPER IDENTIFIER { $$ = create_declaration_node(TYPE_FLOAT, $2, NULL); }
+    | CYPHER IDENTIFIER { $$ = create_declaration_node(TYPE_STRING, $2, NULL); }
+    | SAGE IDENTIFIER ASSIGN expression { 
+        ASTNode* decl = create_declaration_node(TYPE_INT, $2, NULL);
+        ASTNode* assign = create_assignment_node(create_identifier_node($2), $4);
+        assign->next = decl;
+        $$ = assign;
     }
-    | FLASH '(' expression ')' block else_if_chain    { 
-        $$ = create_if_node($3, $5, $6);
+    | VIPER IDENTIFIER ASSIGN expression {
+        ASTNode* decl = create_declaration_node(TYPE_FLOAT, $2, NULL);
+        ASTNode* assign = create_assignment_node(create_identifier_node($2), $4);
+        assign->next = decl;
+        $$ = assign;
     }
-    ;
-
-else_if_chain
-    : SMOKE block                                     { $$ = $2; }
-    | SMOKE FLASH '(' expression ')' block            { $$ = create_if_node($4, $6, NULL); }
-    | SMOKE FLASH '(' expression ')' block SMOKE block { $$ = create_if_node($4, $6, $8); }
-    | SMOKE FLASH '(' expression ')' block else_if_chain { $$ = create_if_node($4, $6, $7); }
-    ;
-
-while_statement
-    : ROTATE '(' expression ')' block { $$ = create_while_node($3, $5); }
-    ;
-
-input_statement
-    : BREACH IDENTIFIER              { 
-        $$ = create_input_node(create_identifier_node($2));
-        free($2);
+    | CYPHER IDENTIFIER ASSIGN expression {
+        ASTNode* decl = create_declaration_node(TYPE_STRING, $2, NULL);
+        ASTNode* assign = create_assignment_node(create_identifier_node($2), $4);
+        assign->next = decl;
+        $$ = assign;
     }
-    ;
-
-output_statement
-    : SOVA expression               { $$ = create_output_node($2); }
-    ;
-
-return_statement
-    : PLANT expression               { $$ = create_return_node($2); }
-    | PLANT                         { $$ = create_return_node(NULL); }
     ;
 
 assignment
-    : IDENTIFIER '=' expression      {
-        ASTNode* node = create_node(NODE_ASSIGNMENT);
-        node->left = create_identifier_node($1);
-        node->right = $3;
-        $$ = node;
-        free($1);
+    : IDENTIFIER ASSIGN expression { $$ = create_assignment_node(create_identifier_node($1), $3); }
+    ;
+
+if_statement
+    : SMOKE FLASH LPAREN expression RPAREN block SMOKE block { $$ = create_if_node($4, $6, $8); }
+    | SMOKE FLASH LPAREN expression RPAREN block { $$ = create_if_node($4, $6, NULL); }
+    ;
+
+while_statement
+    : WHILE LPAREN expression RPAREN block { $$ = create_while_node($3, $5); }
+    ;
+
+for_statement
+    : FOR LPAREN declaration SEMICOLON expression SEMICOLON assignment RPAREN block {
+        $$ = create_for_node($3, $5, $7, $9);
     }
     ;
 
-function_call
-    : IDENTIFIER '(' ')'             {
-        $$ = create_function_call_node($1);
-        free($1);
-    }
+return_statement
+    : RETURN expression { $$ = create_return_node($2); }
+    ;
+
+print_statement
+    : PRINT expression { $$ = create_output_node($2); }
+    ;
+
+input_statement
+    : INPUT IDENTIFIER { $$ = create_input_node(create_identifier_node($2)); }
+    ;
+
+output_statement
+    : OUTPUT expression { $$ = create_output_node($2); }
+    ;
+
+expression
+    : expression HEAL expression { $$ = create_binary_op_node($1, create_operator_node(OP_ADD), $3); }
+    | expression DAMAGE expression { $$ = create_binary_op_node($1, create_operator_node(OP_SUB), $3); }
+    | expression KILL expression { $$ = create_binary_op_node($1, create_operator_node(OP_MUL), $3); }
+    | expression SHARE expression { $$ = create_binary_op_node($1, create_operator_node(OP_DIV), $3); }
+    | expression EQUAL expression { $$ = create_binary_op_node($1, create_operator_node(OP_EQ), $3); }
+    | expression NOTEQUAL expression { $$ = create_binary_op_node($1, create_operator_node(OP_NEQ), $3); }
+    | expression LESS expression { $$ = create_binary_op_node($1, create_operator_node(OP_LT), $3); }
+    | expression LESSEQUAL expression { $$ = create_binary_op_node($1, create_operator_node(OP_LE), $3); }
+    | expression GREATER expression { $$ = create_binary_op_node($1, create_operator_node(OP_GT), $3); }
+    | expression GREATEREQUAL expression { $$ = create_binary_op_node($1, create_operator_node(OP_GE), $3); }
+    | LPAREN expression RPAREN { $$ = $2; }
+    | INTEGER_LITERAL { $$ = create_number_node($1); }
+    | FLOAT_LITERAL { $$ = create_float_node($1); }
+    | STRING_LITERAL { $$ = create_string_node($1); }
+    | IDENTIFIER { $$ = create_identifier_node($1); }
+    | IDENTIFIER LPAREN arg_list RPAREN { $$ = create_function_call_node($1, $3); }
+    | IDENTIFIER LPAREN RPAREN { $$ = create_function_call_node($1, NULL); }
+    ;
+
+arg_list
+    : expression { $$ = create_arg_list_node($1); }
+    | arg_list COMMA expression { $$ = $1; $1->next = $3; }
     ;
 
 %%
 
-void yyerror(const char* s) {
-    fprintf(stderr, "Error de sintaxis en línea %d cerca de '%s': %s\n", 
-            line_num, yytext, s);
+void yyerror(const char *s) {
+    fprintf(stderr, "Error en línea %d: %s\n", yylineno, s);
 }

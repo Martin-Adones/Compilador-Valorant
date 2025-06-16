@@ -1,0 +1,31 @@
+sage suma(sage a, sage b) {
+    sage resultado = a heal b;
+    return resultado;
+}
+
+viper promedio(viper a, viper b) {
+    viper resultado = (a heal b) share 2;
+    return resultado;
+}
+
+cypher concatenar(cypher a, cypher b) {
+    cypher resultado = a heal b;
+    return resultado;
+}
+
+main() {
+    sage x = 5;
+    sage y = 10;
+    sage resultado = suma(x, y);
+    print resultado;
+
+    viper a = 15.5;
+    viper b = 20.5;
+    viper prom = promedio(a, b);
+    print prom;
+
+    cypher texto1 = "Hola ";
+    cypher texto2 = "Valorant";
+    cypher texto = concatenar(texto1, texto2);
+    print texto;
+} 
