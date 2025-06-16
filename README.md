@@ -231,6 +231,73 @@ flash (cond1) {
 
 ---
 
+## 🌲 ¿Cómo funciona el AST? (Visual y Breve)
+
+El AST (Árbol de Sintaxis Abstracta) es una estructura en árbol donde cada nodo representa una operación, instrucción o bloque del programa. El intérprete recorre este árbol para ejecutar el código.
+
+### Ejemplo 1: Suma simple
+
+Código Valorant:
+
+```valorant
+sage a = 2;
+sage b = 3;
+sage c = a heal b;
+```
+
+Representación visual del AST:
+
+```
+   =           =           =
+  / \         / \         / \
+a   2       b   3       c   heal
+                           /   \
+                          a     b
+```
+
+- Cada `=` es un nodo de asignación.
+- El nodo `heal` es la suma, con hijos `a` y `b`.
+
+### Ejemplo 2: Ciclo while (rotate)
+
+Código Valorant:
+
+```valorant
+sage i = 0;
+rotate (i lose 5) {
+    sova i;
+    i = i heal 1;
+}
+```
+
+AST visual:
+
+```
+   =
+  / \
+i   0
+   |
+ rotate
+  /    \
+cond   block
+ |      |
+lose    ;
+/  \   / \
+i   5 sova  =
+         |  / \
+         i i 1
+```
+
+- El nodo `rotate` tiene como hijos la condición (`i lose 5`) y el bloque de instrucciones.
+- El bloque puede tener varios hijos (instrucciones).
+
+**El intérprete recorre el árbol así:**
+
+- Para la suma, evalúa los hijos de `heal` y suma sus valores.
+- Para el ciclo, evalúa la condición y ejecuta el bloque mientras sea verdadera.
+
+---
+
 ## 📚 Ejemplos
 
 Consulta la carpeta `examples/` para ver programas de prueba, calculadoras, control de flujo, entrada/salida y uso de funciones.
