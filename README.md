@@ -6,7 +6,7 @@ Un compilador personalizado creado con **Flex**, **Bison** y **C** que implement
 
 ## 📋 Descripción General
 
-Este lenguaje de programación es una mezcla entre la sintaxis tradicional y palabras clave temáticas de Valorant. Permite declarar variables, realizar operaciones aritméticas, controlar flujo de ejecución, manejar funciones, y hacer entrada/salida de datos.
+Este lenguaje de programación es una mezcla entre la sintaxis tradicional y palabras clave temáticas de Valorant. Permite declarar variables, realizar operaciones aritméticas, controlar flujo de ejecución, manejar funciones (con parámetros y tipo de retorno), y hacer entrada/salida de datos.
 
 ---
 
@@ -46,6 +46,14 @@ Este lenguaje de programación es una mezcla entre la sintaxis tradicional y pal
 
 ---
 
+### Operadores Lógicos
+
+| Palabra Clave | Operador | Descripción         |
+| ------------- | -------- | ------------------- |
+| smoke flash   | else if  | Condicional anidado |
+
+---
+
 ### Control de Flujo
 
 | Palabra Clave | Equivalente en C/C++ | Descripción             |
@@ -62,7 +70,7 @@ Este lenguaje de programación es una mezcla entre la sintaxis tradicional y pal
 
 | Palabra Clave | Descripción              |
 | ------------- | ------------------------ |
-| agent         | Declarar función         |
+| agent         | Declarar clase/función   |
 | plant         | Palabra reservada return |
 | breach        | Entrada (input)          |
 | sova          | Salida (output)          |
@@ -71,13 +79,18 @@ Este lenguaje de programación es una mezcla entre la sintaxis tradicional y pal
 
 ## 💡 Variables y Declaración
 
-- Las variables se declaran con los tipos `sage`, `viper` o `cypher`.
-- Ejemplo:
+Las variables se declaran con los tipos `sage`, `viper` o `cypher`.
 
-```
+```valorant
 sage kills = 10;
 viper accuracy = 95.5;
 cypher playerName = "Sova";
+```
+
+También se pueden declarar sin inicializar:
+
+```valorant
+sage score;
 ```
 
 ---
@@ -87,14 +100,18 @@ cypher playerName = "Sova";
 - Para recibir entrada de usuario se usa la palabra clave `breach`.
 - Para imprimir en pantalla se usa `sova`.
 
+```valorant
+sova "Ingresa tu nombre: ";
+breach nombre;
+```
+
 ---
 
 ## 🛠️ Operadores y Sintaxis
 
-- Las operaciones aritméticas y lógicas utilizan las palabras clave en lugar de símbolos.
-- Ejemplo de suma:
+Las operaciones aritméticas y lógicas utilizan las palabras clave en lugar de símbolos.
 
-```
+```valorant
 sage a = 10;
 sage b = 20;
 sage c = a heal b;  // c = 30
@@ -102,46 +119,129 @@ sage c = a heal b;  // c = 30
 
 ---
 
-## ⚙️ Ejemplo Básico
+## 🔥 Estructura de un Programa
+
+Todo programa debe comenzar con un bloque `agent` y definir un método principal llamado `spike`. Este método será ejecutado automáticamente al iniciar el programa.
 
 ```valorant
-agent main() {
-    sage kills = 5;
-    viper accuracy = 99.9;
-    cypher name = "Phoenix";
-    sova("Player: ", name);
-    sova("Kills: ", kills);
-    sova("Accuracy: ", accuracy);
-    if (kills win 3) {
-        sova("Good job!");
-    } else {
-        sova("Keep trying.");
+agent MiPrograma {
+    sage spike() {
+        // Código principal aquí
+        plant 0;
     }
 }
 ```
 
 ---
 
-## 🧩 Comentarios
+## 🧩 Ejemplo de Print Simple
 
-- Comentarios de una sola línea con `//`
-- Se ignoran espacios y tabulaciones
-
----
-
-## 🔧 Notas Técnicas
-
-- El compilador está basado en Flex (análisis léxico), Bison (análisis sintáctico) y código C para la semántica.
-- Soporta control de flujo completo con condicionales y ciclos.
-- Incluye manejo de funciones y retorno.
+```valorant
+agent PrintHello {
+    sage spike() {
+        sova "¡Hola Valorant!";
+        plant 0;
+    }
+}
+```
 
 ---
 
-## 📚 Referencias
+## 🧮 Ejemplo de Función y Uso
 
-- Flex: https://github.com/westes/flex
-- Bison: https://www.gnu.org/software/bison/
+```valorant
+agent Matematicas {
+    viper suma(viper a, viper b) {
+        plant a heal b;
+    }
+    sage spike() {
+        viper resultado = suma(10.5, 5.5);
+        sova "La suma es: ";
+        sova resultado;
+        plant 0;
+    }
+}
+```
 
 ---
 
-¡Gracias por usar el compilador Valorant! 🎮
+## 🔁 Ejemplo FizzBuzz
+
+```valorant
+agent FizzBuzz {
+    sage fizzbuzz(sage n) {
+        rotate (n win 0) {
+            flash (n eco 0) {
+                flash (n kill 3 eco 0) {
+                    flash (n kill 5 eco 0) {
+                        sova "FizzBuzz";
+                    } smoke {
+                        sova "Fizz";
+                    }
+                } smoke flash (n kill 5 eco 0) {
+                    sova "Buzz";
+                } smoke {
+                    sova n;
+                }
+            }
+            n = n damage 1;
+        }
+        plant 0;
+    }
+    sage spike() {
+        fizzbuzz(15);
+        plant 0;
+    }
+}
+```
+
+---
+
+## 🧠 Sobre el smoke flash (else if)
+
+Puedes anidar condiciones usando `smoke flash` para simular un `else if`:
+
+```valorant
+flash (cond1) {
+    sova "Es cond1";
+} smoke flash (cond2) {
+    sova "Es cond2";
+} smoke {
+    sova "Ninguna";
+}
+```
+
+---
+
+## 🔬 Estructura del Proyecto
+
+- `src/valorant.y`: Gramática Bison/Yacc del lenguaje
+- `src/valorant.l`: Analizador léxico (Flex)
+- `src/ast.c` y `include/ast.h`: Definición y manejo del AST (Árbol de Sintaxis Abstracta)
+- `src/interpreter.c`: Intérprete que ejecuta el AST
+- `src/main.c`: Punto de entrada, inicializa el parser y ejecuta el programa
+- `examples/`: Ejemplos de programas en el lenguaje Valorant
+
+---
+
+## 🌳 AST y Ejecución
+
+1. **Parsing:** El parser (Bison) convierte el código fuente en un AST, donde cada nodo representa una construcción del lenguaje (declaración, operación, función, etc).
+2. **AST:** El AST es una estructura de nodos enlazados que modela la jerarquía y el flujo del programa. Cada nodo puede representar una operación, declaración, bloque, función, llamada, etc.
+3. **Intérprete:** El intérprete recorre el AST y ejecuta cada nodo según su tipo:
+   - Ejecuta bloques, evalúa expresiones, resuelve llamadas a funciones, gestiona variables y contexto.
+   - El contexto de ejecución permite variables locales y paso de argumentos a funciones.
+   - El tipo de retorno de cada función se respeta y se fuerza según la declaración.
+   - Entrada y salida se gestionan con `breach` y `sova`.
+
+---
+
+## 📚 Ejemplos
+
+Consulta la carpeta `examples/` para ver programas de prueba, calculadoras, control de flujo, entrada/salida y uso de funciones.
+
+---
+
+### Créditos
+
+Desarrollado como ejercicio académico. Inspirado en Valorant y en la enseñanza de compiladores.
