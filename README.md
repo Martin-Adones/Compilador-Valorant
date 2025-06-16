@@ -168,28 +168,23 @@ agent Matematicas {
 ## 🔁 Ejemplo FizzBuzz
 
 ```valorant
-agent FizzBuzz {
-    sage fizzbuzz(sage n) {
-        rotate (n win 0) {
-            flash (n eco 0) {
-                flash (n kill 3 eco 0) {
-                    flash (n kill 5 eco 0) {
-                        sova "FizzBuzz";
-                    } smoke {
-                        sova "Fizz";
-                    }
-                } smoke flash (n kill 5 eco 0) {
-                    sova "Buzz";
+agent FizzBuzz{
+    sage spike(){
+        rush (sage num = 1; num lose 101; num = num heal 1) {
+            flash (((num share 15) kill 15) headshot num) {
+                sova "FizzBuzz";
+            } smoke {
+                flash (((num share 3) kill 3) headshot num) {
+                    sova "Fizz";
                 } smoke {
-                    sova n;
+                    flash (((num share 5) kill 5) headshot num) {
+                        sova "Buzz";
+                    } smoke {
+                        sova num;
+                    }
                 }
             }
-            n = n damage 1;
         }
-        plant 0;
-    }
-    sage spike() {
-        fizzbuzz(15);
         plant 0;
     }
 }
