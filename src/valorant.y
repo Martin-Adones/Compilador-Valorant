@@ -46,6 +46,8 @@ ASTNode* root = NULL;
 %type <ast_node> block return_statement assignment
 %type <ast_node> function_call for_init for_condition for_increment
 %type <ast_node> else_if_chain
+%type <ast_node> parameter_list_opt parameter_list parameter
+%type <ast_node> argument_list_opt argument_list
 
 /* Precedencia y asociatividad */
 %right '='
@@ -77,10 +79,42 @@ method_list
     ;
 
 method
-    : SAGE IDENTIFIER '(' ')' block  { 
-        $$ = create_method_node($2, $5);
+    : SAGE IDENTIFIER '(' parameter_list_opt ')' block  { 
+        $$ = create_method_node_with_params($2, $4, $6);
+        $$->data_type = TYPE_INT;
         free($2);
     }
+    | VIPER IDENTIFIER '(' parameter_list_opt ')' block  {
+        $$ = create_method_node_with_params($2, $4, $6);
+        $$->data_type = TYPE_FLOAT;
+        free($2);
+    }
+    | CYPHER IDENTIFIER '(' parameter_list_opt ')' block  {
+        $$ = create_method_node_with_params($2, $4, $6);
+        $$->data_type = TYPE_STRING;
+        free($2);
+    }
+    ;
+
+parameter_list_opt
+    : /* vacío */ { $$ = NULL; }
+    | parameter_list { $$ = $1; }
+    ;
+
+parameter_list
+    : parameter { $$ = $1; }
+    | parameter_list ',' parameter { 
+        ASTNode* temp = $1;
+        while (temp->next) temp = temp->next;
+        temp->next = $3;
+        $$ = $1;
+    }
+    ;
+
+parameter
+    : SAGE IDENTIFIER { $$ = create_declaration_node(TYPE_INT, $2, NULL); free($2); }
+    | VIPER IDENTIFIER { $$ = create_declaration_node(TYPE_FLOAT, $2, NULL); free($2); }
+    | CYPHER IDENTIFIER { $$ = create_declaration_node(TYPE_STRING, $2, NULL); free($2); }
     ;
 
 block
@@ -224,9 +258,24 @@ assignment
     ;
 
 function_call
-    : IDENTIFIER '(' ')'             {
-        $$ = create_function_call_node($1);
+    : IDENTIFIER '(' argument_list_opt ')'             {
+        $$ = create_function_call_node_with_args($1, $3);
         free($1);
+    }
+    ;
+
+argument_list_opt
+    : /* vacío */ { $$ = NULL; }
+    | argument_list { $$ = $1; }
+    ;
+
+argument_list
+    : expression { $$ = $1; }
+    | argument_list ',' expression { 
+        ASTNode* temp = $1;
+        while (temp->next) temp = temp->next;
+        temp->next = $3;
+        $$ = $1;
     }
     ;
 

@@ -70,6 +70,9 @@ typedef struct ASTNode {
     struct ASTNode* parent; // Referencia al nodo padre
     struct ASTNode* init;  // For loop initialization
     struct ASTNode* increment; // For loop increment
+    // NUEVO: para métodos y llamadas
+    struct ASTNode* params; // Lista de parámetros (método)
+    struct ASTNode* args;   // Lista de argumentos (llamada)
 } ASTNode;
 
 // Funciones de creación de nodos
@@ -89,7 +92,9 @@ ASTNode* create_output_node(ASTNode* expression);
 ASTNode* create_for_node(ASTNode* init, ASTNode* condition, ASTNode* increment, ASTNode* body);
 ASTNode* create_class_node(const char* name, ASTNode* methods);
 ASTNode* create_method_node(const char* name, ASTNode* body);
+ASTNode* create_method_node_with_params(const char* name, ASTNode* params, ASTNode* body);
 ASTNode* create_function_call_node(const char* name);
+ASTNode* create_function_call_node_with_args(const char* name, ASTNode* args);
 ASTNode* create_return_node(ASTNode* expression);
 
 // Funciones de manejo del AST
@@ -97,4 +102,4 @@ void free_ast(ASTNode* node);
 void print_ast(ASTNode* node, int level);
 char* generate_code(ASTNode* node);
 
-#endif // AST_H 
+#endif // AST_H

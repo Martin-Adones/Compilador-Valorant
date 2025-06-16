@@ -7,7 +7,7 @@ agent Valorant {
         plant numero;
     }
 
-    sage Valorant() {  // Constructor (main)
+    sage spike() {  // Método principal
         sage numero = 2;
         sova numero;
         sova "\n";

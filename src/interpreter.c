@@ -154,8 +154,13 @@ Value interpret_node(void* node, ExecutionContext* context) {
         case NODE_CLASS: {
             // Guardar la referencia a la clase actual
             current_class = ast_node;
-            
-            // Buscar el constructor (método con el mismo nombre que la clase)
+
+            // Buscar y ejecutar el método 'spike' si existe
+            ASTNode* spike_method = find_method(ast_node, "spike");
+            if (spike_method) {
+                return interpret_node(spike_method, context);
+            }
+            // Si no existe 'spike', buscar constructor (método con el mismo nombre que la clase)
             ASTNode* constructor = find_method(ast_node, ast_node->value.string_value);
             if (constructor) {
                 return interpret_node(constructor, context);
@@ -165,20 +170,38 @@ Value interpret_node(void* node, ExecutionContext* context) {
 
         case NODE_METHOD: {
             // Ejecutar el cuerpo del método
+            Value method_result = {0};
             if (ast_node->left) {
-                Value method_result = interpret_node(ast_node->left, context);
-                return method_result;
+                method_result = interpret_node(ast_node->left, context);
             }
-            Value null_value = {0};
-            null_value.type = TYPE_SAGE;
-            return null_value;
+            // Forzar el tipo de retorno según el método
+            switch (ast_node->data_type) {
+                case TYPE_INT:
+                    if (method_result.type != TYPE_SAGE) {
+                        method_result.type = TYPE_SAGE;
+                        method_result.value.sage_val = 0;
+                    }
+                    break;
+                case TYPE_FLOAT:
+                    if (method_result.type != TYPE_VIPER) {
+                        method_result.type = TYPE_VIPER;
+                        method_result.value.viper_val = 0.0;
+                    }
+                    break;
+                case TYPE_STRING:
+                    if (method_result.type != TYPE_CYPHER) {
+                        method_result.type = TYPE_CYPHER;
+                        method_result.value.cypher_val = strdup("");
+                    }
+                    break;
+            }
+            return method_result;
         }
 
         case NODE_FUNCTION_CALL: {
             // Buscar el método en la clase actual
             const char* method_name = ast_node->value.string_value;
             ASTNode* method = find_method(current_class, method_name);
-            
             if (!method) {
                 char error_msg[256];
                 snprintf(error_msg, sizeof(error_msg), "Método '%s' no encontrado", method_name);
@@ -187,17 +210,34 @@ Value interpret_node(void* node, ExecutionContext* context) {
                 null_value.type = TYPE_SAGE;
                 return null_value;
             }
-            
             // Crear un nuevo contexto para el método
             ExecutionContext* method_context = create_context();
-            
-            // Ejecutar el método
-            Value method_result = interpret_node(method, method_context);
-            Value return_value = method_result;  // No necesitamos copiar aquí
-            
-            // Liberar el contexto del método
+            // PASO DE ARGUMENTOS A PARÁMETROS
+            ASTNode* param = method->params;
+            ASTNode* arg = ast_node->args;
+            while (param && arg) {
+                // Evaluar el argumento en el contexto actual
+                Value val = interpret_node(arg, context);
+                set_variable(method_context, param->value.string_value, val);
+                param = param->next;
+                arg = arg->next;
+            }
+            // Si hay más parámetros que argumentos, inicializar a 0/""
+            while (param) {
+                Value v = {0};
+                switch(param->data_type) {
+                    case TYPE_SAGE: v.type = TYPE_SAGE; v.value.sage_val = 0; break;
+                    case TYPE_VIPER: v.type = TYPE_VIPER; v.value.viper_val = 0.0; break;
+                    case TYPE_CYPHER: v.type = TYPE_CYPHER; v.value.cypher_val = strdup(""); break;
+                    default: v.type = TYPE_SAGE; v.value.sage_val = 0;
+                }
+                set_variable(method_context, param->value.string_value, v);
+                param = param->next;
+            }
+            // Ejecutar el cuerpo del método
+            Value method_result = interpret_node(method->left, method_context);
+            Value return_value = method_result;
             free_context(method_context);
-            
             return return_value;
         }
 
@@ -232,6 +272,8 @@ Value interpret_node(void* node, ExecutionContext* context) {
         case NODE_OUTPUT: {
             Value val = interpret_node(ast_node->left, context);
             print_value(val);
+            printf("\n"); // Asegura salto de línea tras imprimir
+            fflush(stdout); // Fuerza la impresión inmediata
             return val;
         }
 

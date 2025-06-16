@@ -1,5 +1,5 @@
 agent CicloFor {
-    sage CicloFor() {  // Constructor (main)
+    sage spike() {  // Método principal
         sage i = 0;
         rush (i = 0; i lose 3; i = i heal 1) {
             sova "Iteracion numero: ";

@@ -1,6 +1,6 @@
 // Test 04: Entrada y Salida de Datos
 agent EntradaSalida {
-    sage EntradaSalida() {  // Constructor (main)
+    sage spike() {  // Método principal
         // Prueba de entrada de diferentes tipos
         cypher nombre;
         sage edad;
@@ -38,12 +38,11 @@ agent EntradaSalida {
             flash (numero lose 11) {
                 sova "Número válido!\n";
             } smoke {
-                sova "Número muy grande!\n";
+                sova "Número fuera de rango\n";
             }
         } smoke {
-            sova "Número muy pequeño!\n";
+            sova "Número fuera de rango\n";
         }
-        
         plant 0;
     }
-} 
+}

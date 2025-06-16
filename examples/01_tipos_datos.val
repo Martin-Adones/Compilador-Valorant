@@ -1,6 +1,6 @@
 // Test 01: Tipos de Datos Básicos
 agent TiposDatos {
-    sage TiposDatos() {  // Constructor (main)
+    sage spike() {  // Método principal
         // Prueba de sage (enteros)
         sage numero1 = 42;
         sage numero2;
@@ -30,4 +30,4 @@ agent TiposDatos {
         
         plant 0;
     }
-} 
+}

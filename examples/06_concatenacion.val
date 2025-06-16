@@ -1,6 +1,6 @@
 // Test 06: Concatenación de Strings
 agent Concatenacion {
-    sage Concatenacion() {  // Constructor (main)
+    sage spike() {  // Método principal
         // Prueba de concatenación básica
         cypher nombre = "Agente ";
         cypher apellido = "Valorant";
@@ -40,10 +40,9 @@ agent Concatenacion {
         sova "Ingresa el nivel del agente: ";
         breach nuevo_nivel;
         
-        cypher ficha = nuevo_agente heal nuevo_nivel;
-        sova "\nFicha del agente: ";
-        sova ficha;
-        
+        cypher resultado = "Agente " heal nuevo_agente heal " nivel " heal nuevo_nivel;
+        sova "\nResultado: ";
+        sova resultado;
         plant 0;
     }
-} 
+}

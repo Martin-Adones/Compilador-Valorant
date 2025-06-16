@@ -1,6 +1,6 @@
 // Test 02: Operadores Aritméticos y de Comparación
 agent Operadores {
-    sage Operadores() {  // Constructor (main)
+    sage spike() {  // Método principal
         // Prueba de operadores aritméticos
         sage a = 10;
         sage b = 5;
@@ -50,4 +50,4 @@ agent Operadores {
         
         plant 0;
     }
-} 
+}

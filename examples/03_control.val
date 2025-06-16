@@ -1,5 +1,5 @@
 agent Control {
-    sage Control() {  // Constructor (main)
+    sage spike() {  // Método principal
         sage contador = 1;
         sage limite = 5;
         
@@ -38,9 +38,7 @@ agent Control {
                 sova "Encontrado el 997, deteniendo bucle";
                 i = 10001;
             }
-            i = i heal 1;
         }
-        
         plant 0;
     }
 }

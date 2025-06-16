@@ -165,9 +165,26 @@ ASTNode* create_method_node(const char* name, ASTNode* body) {
     return node;
 }
 
+ASTNode* create_method_node_with_params(const char* name, ASTNode* params, ASTNode* body) {
+    ASTNode* node = create_node(NODE_METHOD);
+    node->value.string_value = strdup(name);
+    node->params = params; // Lista de parámetros
+    node->left = body;     // Cuerpo del método
+    if (body) body->parent = node;
+    if (params) params->parent = node;
+    return node;
+}
+
 ASTNode* create_function_call_node(const char* name) {
     ASTNode* node = create_node(NODE_FUNCTION_CALL);
     node->value.string_value = strdup(name);
+    return node;
+}
+
+ASTNode* create_function_call_node_with_args(const char* name, ASTNode* args) {
+    ASTNode* node = create_node(NODE_FUNCTION_CALL);
+    node->value.string_value = strdup(name);
+    node->args = args; // Lista de argumentos
     return node;
 }
 
@@ -263,4 +280,4 @@ void print_ast(ASTNode* node, int level) {
 char* generate_code(ASTNode* node) {
     // Esta función se implementará más adelante
     return NULL;
-} 
+}

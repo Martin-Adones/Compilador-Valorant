@@ -1,5 +1,5 @@
 agent OperadoresNuevos {
-    sage OperadoresNuevos() {  // Constructor (main)
+    sage spike() {  // Método principal
         sage a = 10;
         sage b = 20;
         sage c = 10;
