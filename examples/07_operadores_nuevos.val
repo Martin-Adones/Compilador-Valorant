@@ -3,57 +3,54 @@ agent OperadoresNuevos {
         sage a = 10;
         sage b = 20;
         sage c = 10;
-        sova a;
-        sova "\n";
-        sova b;
-        sova "\n";
-        sova c;
-        sova "\n";
+        sova "a = " heal a;
+        sova "b = " heal b;
+        sova "c = " heal c;
         // eco (!=)
         flash (a eco b) {
-            sova "a es distinto de b\n";
+            sova "a es distinto de b";
         }
 
         flash (a eco c) {
-            sova "a es distinto de c\n"; // Esto NO se imprimirá
+            sova "a es distinto de c"; // Esto NO se imprimirá
         }
 
         // save (<=)
         flash (a save b) {
-            sova "a es menor o igual que b\n";
+            sova "a es menor o igual que b";
         }
 
         flash (b save a) {
-            sova "b es menor o igual que a\n"; // Esto NO se imprimirá
+            sova "b es menor o igual que a"; // Esto NO se imprimirá
         }
 
         // fullbuy (>=)
         flash (b fullbuy a) {
-            sova "b es mayor o igual que a\n";
+            sova "b es mayor o igual que a";
         }
 
         flash (a fullbuy c) {
-            sova "a es mayor o igual que c\n";
+            sova "a es mayor o igual que c";
         }
 
-        sova "nuevos\n";
+        sova "nuevos";
         // Combinado con else
         flash (a eco b) {
-            sova "a y b son diferentes\n";
+            sova "a y b son diferentes";
         } smoke {
-            sova "a y b son iguales\n";
+            sova "a y b son iguales";
         }
 
         flash (a save 5) {
-            sova "a <= 5\n";
+            sova "a <= 5";
         } smoke {
-            sova "a > 5\n";
+            sova "a > 5";
         }
 
         flash (a fullbuy 15) {
-            sova "a >= 15\n";
+            sova "a >= 15";
         } smoke {
-            sova "a < 15\n";
+            sova "a < 15";
         }
 
         plant 0;

@@ -2,7 +2,6 @@ agent Valorant {
     sage sumar() {
         sage numero = 1;
         sova numero;
-        sova "\n";
         numero = numero heal 1;
         plant numero;
     }
@@ -10,10 +9,8 @@ agent Valorant {
     sage spike() {  // Método principal
         sage numero = 2;
         sova numero;
-        sova "\n";
         numero = sumar();
         sova numero;
-        sova "\n";
         plant 0;
     }
 }

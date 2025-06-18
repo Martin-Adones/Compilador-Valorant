@@ -19,12 +19,12 @@ agent GuessNumber {
             jugando = 1;
             
             // Mensaje de bienvenida
-            sova "\n=== Adivina el Número - Valorant Edition ===\n\n";
-            sova "Selecciona una opción:\n";
-            sova "1 - Novato (1-50)\n";
-            sova "2 - Experto (1-100)\n";
-            sova "3 - Radiante (1-200)\n";
-            sova "0 - Salir\n\n";
+            sova "=== Adivina el Número - Valorant Edition ===";
+            sova "Selecciona una opción:";
+            sova "1 - Novato (1-50)";
+            sova "2 - Experto (1-100)";
+            sova "3 - Radiante (1-200)";
+            sova "0 - Salir";
             
             // Leer opción
             breach dificultad;
@@ -48,7 +48,7 @@ agent GuessNumber {
                         numero_secreto = ((numero_secreto kill 3) share 2) heal 67; // Número entre 1-200
                         max_intentos = 5;
                     } smoke {
-                        sova "Opción no válida. Selecciona 1, 2, 3 o 0 para salir.\n";
+                        sova "Opción no válida. Selecciona 1, 2, 3 o 0 para salir.";
                         jugando = 0;  // No iniciar el juego si la opción no es válida
                     }
                 }
@@ -57,16 +57,15 @@ agent GuessNumber {
             // Solo jugar si se seleccionó una dificultad válida
             flash (jugando headshot 1) {
                 // Bucle principal del juego
-                sova "\nComienza el juego! Tienes ";
-                sova max_intentos;
-                sova " intentos.\n\n";
+                sova "Comienza el juego! Tienes " heal max_intentos heal " intentos";
+                
                 
                 // El bucle continúa mientras no se agoten los intentos Y el juego siga activo
                 rotate ((intentos lose max_intentos) kill (jugando headshot 1)) {
                     // Mostrar intentos restantes
                     sova "Intentos restantes: ";
                     sova (max_intentos damage intentos);
-                    sova "\n";
+                    sova "";
                     
                     // Pedir número
                     sova "Ingresa tu adivinanza: ";
@@ -75,27 +74,27 @@ agent GuessNumber {
                     
                     // Verificar adivinanza
                     flash (adivinanza headshot numero_secreto) {
-                        sova "\n¡HEADSHOT! ¡Has acertado!\n";
+                        sova "¡HEADSHOT! ¡Has acertado!";
                         
                         // Calcular puntuación final
                         puntos = puntos damage (intentos kill 10);
                         
                         // Mostrar estadísticas
-                        sova "\nEstadísticas finales:\n";
+                        sova "Estadísticas finales:";
                         sova "- Intentos usados: ";
                         sova intentos;
-                        sova "\n- Puntuación: ";
+                        sova "- Puntuación: ";
                         sova puntos;
-                        sova "\n";
+                        sova "";
                         
                         // Mensaje según desempeño
                         flash (puntos win 80) {
-                            sova "¡Excelente puntería! ¡Eres un verdadero Radiante!\n";
+                            sova "¡Excelente puntería! ¡Eres un verdadero Radiante!";
                         } smoke {
                             flash (puntos win 50) {
-                                sova "¡Buen trabajo! Sigue practicando.\n";
+                                sova "¡Buen trabajo! Sigue practicando.";
                             } smoke {
-                                sova "Has acertado, pero necesitas mejorar tu precisión.\n";
+                                sova "Has acertado, pero necesitas mejorar tu precisión.";
                             }
                         }
                         
@@ -103,22 +102,22 @@ agent GuessNumber {
                     } smoke {
                         // Dar pistas sobre mayor/menor
                         flash (adivinanza win numero_secreto) {
-                            sova "El número es menor!\n";
+                            sova "El número es menor!";
                         } smoke {
-                            sova "El número es mayor!\n";
+                            sova "El número es mayor!";
                         }
                         
                         // Pistas de divisibilidad
                         flash (((numero_secreto share 2) kill 2) headshot numero_secreto) {
-                            sova "Pista: El número es par\n";
+                            sova "Pista: El número es par";
                         } smoke {
                             flash (((numero_secreto share 3) kill 3) headshot numero_secreto) {
-                                sova "Pista: El número es divisible por 3\n";
+                                sova "Pista: El número es divisible por 3";
                             } smoke {
                                 flash (((numero_secreto share 5) kill 5) headshot numero_secreto) {
-                                    sova "Pista: El número es divisible por 5\n";
+                                    sova "Pista: El número es divisible por 5";
                                 } smoke {
-                                    sova "No hay más pistas disponibles\n";
+                                    sova "No hay más pistas disponibles";
                                 }
                             }
                         }
@@ -130,14 +129,14 @@ agent GuessNumber {
                 
                 // Si se acabaron los intentos y no adivinó
                 flash ((intentos headshot max_intentos) kill (jugando headshot 1)) {
-                    sova "\n¡GAME OVER! Te has quedado sin intentos.\n";
+                    sova "¡GAME OVER! Te has quedado sin intentos.";
                     sova "El número secreto era: ";
                     sova numero_secreto;
-                    sova "\n";
+                    sova "";
                 }
                 
                 // Preguntar si quiere jugar otra vez
-                sova "\nPresiona ENTER para continuar...";
+                sova "Presiona ENTER para continuar...";
                 breach adivinanza;
             }
         }

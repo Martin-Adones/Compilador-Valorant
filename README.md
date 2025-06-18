@@ -1,4 +1,4 @@
-# ⚔️ Valorant Compiler
+# ⚔️ Compilador de Valorant
 
 Un compilador personalizado creado con **Flex**, **Bison** y **C** que implementa un lenguaje inspirado en **Valorant**, utilizando palabras clave relacionadas con el juego para representar tipos de datos, operaciones y estructuras de control típicas en programación.
 
@@ -168,6 +168,7 @@ agent Matematicas {
 ## 🔁 Ejemplo FizzBuzz
 
 ```valorant
+//FizzBuzz en Valorant
 agent FizzBuzz{
     sage spike(){
         rush (sage num = 1; num lose 101; num = num heal 1) {

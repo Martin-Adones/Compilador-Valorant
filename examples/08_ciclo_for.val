@@ -1,10 +1,8 @@
 agent CicloFor {
     sage spike() {  // Método principal
         sage i = 0;
-        rush (i = 0; i lose 3; i = i heal 1) {
-            sova "Iteracion numero: ";
-            sova i;
-            sova "\n";
+        rush (i = 0; i lose 10; i = i heal 1) {
+            sova "Iteracion numero: " heal i;
         }
 
         viper health = 50.0;

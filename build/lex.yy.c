@@ -553,11 +553,10 @@ char *yytext;
 
 int line_num = 1;
 
-// Función para procesar caracteres de escape
+// Funcion para procesar caracteres de escape (tipo \n, \t, etc)
 char* process_escape_sequences(const char* str) {
     char* result = malloc(strlen(str) + 1);
     int i = 0, j = 0;
-    
     while (str[i] != '\0') {
         if (str[i] == '\\') {
             i++;
@@ -577,6 +576,7 @@ char* process_escape_sequences(const char* str) {
     result[j] = '\0';
     return result;
 }
+
 #line 581 "build/lex.yy.c"
 #line 582 "build/lex.yy.c"
 
@@ -868,7 +868,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 41 "src/valorant.l"
-; /* Ignorar espacios y tabulaciones */
+; /* Ignora espacios y tabs */
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
@@ -879,7 +879,7 @@ YY_RULE_SETUP
 case 3:
 YY_RULE_SETUP
 #line 43 "src/valorant.l"
-; /* Ignorar comentarios de una linea */
+; /* Ignora comentarios de una linea */
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
@@ -974,7 +974,7 @@ YY_RULE_SETUP
 case 22:
 YY_RULE_SETUP
 #line 63 "src/valorant.l"
-{ return SOVA; }       /* Output */
+{ return SOVA; }       /* Print */
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
